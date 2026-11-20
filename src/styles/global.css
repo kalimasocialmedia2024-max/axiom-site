@@ -248,3 +248,8 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
   .pull { font-size: 22px; }
   .newsletter, .opinion-head { padding: 20px; }
 }
+
+/* بطاقة بديلة بهوية AXIOM+ حين لا توجد صورة */
+.brand-ph { background: #0E0E10 !important; color: #fff !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-family: var(--f-head); font-weight: 700; letter-spacing: .02em; border-bottom: 3px solid var(--accent); }
+.brand-ph img { width: 44px; height: 44px; opacity: .95; }
+.brand-ph span { font-size: 14px; opacity: .85; }

@@ -3,5 +3,5 @@
 const { src, alt = '', ratio = 'r32', w = 800, label = 'صورة', cls = '', style = '', eager = false } = Astro.props;
 ---
 {src
-  ? <div class={`media ${ratio} ${cls}`} style={style}><img src={`${src}?w=${w}&auto=format&fit=crop`} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async"></div>
-  : <div class={`ph ${ratio} ${cls}`} style={style} aria-hidden="true">{label}</div>}
+  ? <div class={`media ${ratio} ${cls}`} style={style}><img src={src.includes('cdn.sanity.io') ? `${src}?w=${w}&auto=format&fit=crop` : src} referrerpolicy="no-referrer" alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async"></div>
+  : <div class={`ph brand-ph ${ratio} ${cls}`} style={style} aria-hidden="true"><img src="/brand/icon-red.png" alt="" width="44" height="44"><span dir="ltr">AXIOM+</span></div>}

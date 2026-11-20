@@ -13,6 +13,16 @@ function tag(block, names) {
   return '';
 }
 
+function image(b) {
+  const m =
+    b.match(/<media:content[^>]*url=["']([^"']+)["'][^>]*>/i) ||
+    b.match(/<media:thumbnail[^>]*url=["']([^"']+)/i) ||
+    b.match(/<enclosure[^>]*url=["']([^"']+)["'][^>]*type=["']image/i) ||
+    b.match(/<enclosure[^>]*type=["']image[^>]*url=["']([^"']+)/i) ||
+    decode(b).match(/<img[^>]*src=["'](https?:[^"']+)/i);
+  return m ? decode(m[1]).trim() : '';
+}
+
 function parse(xml) {
   const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || xml.match(/<entry[\s>][\s\S]*?<\/entry>/gi) || [];
   return blocks.map((b) => {
@@ -28,6 +38,7 @@ function parse(xml) {
       link: link.trim(),
       summary: plain(tag(b, ['description', 'summary', 'content:encoded', 'content']), 900),
       date: date ? new Date(decode(date)) : null,
+      image: image(b),
     };
   }).filter((i) => i.title && i.link);
 }
@@ -70,6 +81,7 @@ for (const f of feeds) {
           feedSummary: i.summary || i.title,
           source: f.name,
           sourceUrl: i.link,
+          ...(i.image ? { feedImage: i.image } : {}),
           feedLang: f.lang || 'ar',
           breaking: false,
           featured: false,

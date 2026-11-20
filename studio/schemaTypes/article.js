@@ -64,6 +64,7 @@ export const article = defineType({
     defineField({ name: 'source', title: 'المصدر (الجهة أو الوكالة)', type: 'string', group: 'extra', hidden: only('news') }),
     defineField({ name: 'sourceUrl', title: 'رابط الخبر الأصليّ', type: 'url', group: 'extra', hidden: only('news') }),
     defineField({ name: 'feedSummary', title: 'نصّ المصدر كما ورد (للمرجع فقط، لا يُنشر). أعد الصياغة بلغتنا', type: 'text', rows: 6, group: 'content', readOnly: true, hidden: ({ document }) => !document?.feedSummary }),
+    defineField({ name: 'feedImage', title: 'صورة المصدر (تظهر إن لم تُضف صورة رئيسية)', type: 'url', group: 'content', hidden: ({ document }) => !document?.feedImage }),
     defineField({ name: 'feedLang', title: 'لغة المصدر', type: 'string', group: 'extra', readOnly: true, hidden: ({ document }) => !document?.feedLang }),
     defineField({ name: 'context', title: 'سياق الخبر', type: 'text', rows: 3, group: 'extra', hidden: only('news') }),
     defineField({ name: 'summary', title: 'الخلاصة (نقاط)', type: 'array', of: [{ type: 'string' }], group: 'extra', hidden: only('analysis') }),

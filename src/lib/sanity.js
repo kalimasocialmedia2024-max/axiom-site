@@ -29,7 +29,7 @@ const ARTICLE = `{
   readingMinutes, breaking, featured, source, sourceUrl, context, summary, pullQuote,
   methodology, keyFindings, recommendations, pages, citation, researchTeam,
   "pdf": pdf.asset->url, "pdfSize": pdf.asset->size, "englishUrl": englishUrl,
-  "image": mainImage{ "url": asset->url, alt, caption, credit },
+  "image": coalesce(mainImage{ "url": asset->url, alt, caption, credit }, select(defined(feedImage) => { "url": feedImage, "alt": "", "credit": source })),
   "authors": authors[]->${PERSON},
   tags,
   body[]{ ..., _type == "image" => { "url": asset->url }, _type == "evidence" => { "url": image.asset->url }, _type == "chart" => { "url": image.asset->url } }

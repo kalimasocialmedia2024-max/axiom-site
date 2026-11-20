@@ -1,5 +1,6 @@
 // مراحل مسار الموافقة: كاتب ← محرّر ← رئيس تحرير
 export const STATUS = {
+  incoming: 'incoming',
   draft: 'draft',
   submitted: 'submitted',
   returned: 'returned',
@@ -8,6 +9,7 @@ export const STATUS = {
 };
 
 export const STATUS_LIST = [
+  { title: 'واردة من المصادر', value: 'incoming' },
   { title: 'مسوّدة الكاتب', value: 'draft' },
   { title: 'بانتظار المحرّر', value: 'submitted' },
   { title: 'أُعيدت إلى الكاتب', value: 'returned' },

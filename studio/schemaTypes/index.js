@@ -3,5 +3,6 @@ import { article } from './article.js';
 import { writer } from './writer.js';
 import { program, episode } from './media.js';
 import { page, siteSettings } from './site.js';
+import { feedSource } from './feedSource.js';
 
-export const schemaTypes = [article, writer, episode, program, page, siteSettings, blockContent];
+export const schemaTypes = [article, writer, episode, program, page, siteSettings, feedSource, blockContent];

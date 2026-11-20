@@ -19,6 +19,7 @@ export const structure = (S) =>
   S.list()
     .title('غرفة التحرير')
     .items([
+      byStatus(S, 'أخبار واردة من المصادر', 'incoming', 'q-incoming'),
       byStatus(S, 'بانتظار المحرّر', 'submitted', 'q-submitted'),
       byStatus(S, 'بانتظار رئيس التحرير', 'edited', 'q-edited'),
       byStatus(S, 'أُعيدت إلى الكتّاب', 'returned', 'q-returned'),
@@ -48,6 +49,7 @@ export const structure = (S) =>
       S.documentTypeListItem('program').title('البرامج'),
       S.documentTypeListItem('writer').title('الكتّاب وفريق التحرير'),
       S.documentTypeListItem('page').title('الصفحات الثابتة'),
+      S.documentTypeListItem('feedSource').title('مصادر الأخبار الآلية'),
       S.divider(),
       S.listItem().id('settings').title('إعدادات الموقع').child(S.document().schemaType('siteSettings').documentId('siteSettings')),
     ]);

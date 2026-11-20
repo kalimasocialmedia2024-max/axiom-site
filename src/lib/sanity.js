@@ -26,7 +26,7 @@ const PERSON = `{ name, "slug": slug.current, role, bio, "photo": photo.asset->u
 const ARTICLE = `{
   _id, title, "slug": slug.current, kind, section, subtitle, excerpt,
   "publishedAt": coalesce(publishedAt, _createdAt), "updatedAt": _updatedAt,
-  readingMinutes, breaking, featured, source, context, summary, pullQuote,
+  readingMinutes, breaking, featured, source, sourceUrl, context, summary, pullQuote,
   methodology, keyFindings, recommendations, pages, citation, researchTeam,
   "pdf": pdf.asset->url, "pdfSize": pdf.asset->size, "englishUrl": englishUrl,
   "image": mainImage{ "url": asset->url, alt, caption, credit },

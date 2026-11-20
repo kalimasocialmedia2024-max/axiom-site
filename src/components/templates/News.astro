@@ -27,7 +27,7 @@ const updated = a.updatedAt && Date.parse(a.updatedAt) - Date.parse(a.publishedA
     <div class="a-meta">
       <span>نُشر: {fmtDateTime(a.publishedAt)}</span>
       {updated && <span>آخر تحديث: {fmtTime(a.updatedAt)}</span>}
-      {a.source && <span style="color:var(--ink);font-weight:600">المصدر: {a.source}</span>}
+      {a.source && <span style="color:var(--ink);font-weight:600">المصدر: {a.sourceUrl ? <a href={a.sourceUrl} rel="noopener nofollow" target="_blank">{a.source}</a> : a.source}</span>}
     </div>
     <Share title={a.title} />
     {a.image?.url && (

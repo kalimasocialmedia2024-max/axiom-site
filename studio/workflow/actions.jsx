@@ -69,7 +69,7 @@ function ForwardAction(props) {
   const move = useMove(props);
   const { role } = useStaffRole();
   const status = statusOf(props);
-  if (!['editor', 'editorInChief'].includes(role) || status !== STATUS.submitted) return null;
+  if (!['editor', 'editorInChief'].includes(role) || ![STATUS.submitted, STATUS.incoming].includes(status)) return null;
   return {
     label: 'انتهى التحرير: رفع إلى رئيس التحرير',
     tone: 'primary',
@@ -162,7 +162,10 @@ function onlyChief(Original) {
   function Gated(props) {
     const original = Original(props);
     const { role } = useStaffRole();
-    return role === 'editorInChief' ? original : null;
+    if (role === 'editorInChief') return original;
+    // المحرّر يستطيع حذف خبر وارد من المصادر لم يُعتمد
+    if (Original.action === 'delete' && role === 'editor' && props.type === 'article' && statusOf(props) === STATUS.incoming && !props.published) return original;
+    return null;
   }
   Gated.action = Original.action;
   return Gated;
@@ -182,7 +185,7 @@ export function resolveActions(prev, context) {
 function StatusBadge(props) {
   if (props.type !== 'article') return null;
   const status = statusOf(props);
-  const color = { draft: 'default', submitted: 'warning', returned: 'danger', edited: 'primary', published: 'success' }[status];
+  const color = { incoming: 'default', draft: 'default', submitted: 'warning', returned: 'danger', edited: 'primary', published: 'success' }[status];
   return { label: STATUS_LIST.find((s) => s.value === status)?.title || status, color };
 }
 

@@ -272,3 +272,8 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
 .topics { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 14px 0; border-bottom: 1px solid var(--line); }
 .topics .lbl { font-family: var(--f-head); font-weight: 700; font-size: 14px; margin-inline-end: 6px; }
 .chip:hover { background: var(--accent); color: #fff; }
+
+/* العناوين الرئيسة بالأحمر، وشريط أبطأ تُحسب مدّته من عدد العناوين */
+.hero-main h1, .hero-main h1 a, .side-item h3, .side-item h3 a, .a-title { color: var(--accent); }
+.hero-main h1 a:hover, .side-item h3 a:hover { color: var(--accent-hover); }
+.ticker-track { animation-duration: var(--tick-dur, 100s); }

@@ -1,0 +1,59 @@
+---
+// زرّ "تنزيل التطبيق": يظهر حين يسمح المتصفّح بتثبيت الموقع تطبيقاً،
+// وعلى آيفون يظهر شرح قصير لأنّ Safari لا يسمح بالتثبيت بزرّ.
+---
+<div id="install-app" class="install-app" hidden>
+  <img src="/brand/logo-square.png" alt="" width="40" height="40">
+  <div class="install-text">
+    <b>تطبيق AXIOM+</b>
+    <span id="install-hint">ثبّت الموقع على هاتفك واقرأ الأخبار بضغطة.</span>
+  </div>
+  <button id="install-go" class="install-go" type="button">تنزيل</button>
+  <button id="install-close" class="install-close" type="button" aria-label="إغلاق">×</button>
+</div>
+<style>
+  .install-app { position: fixed; inset-inline: 12px; bottom: 12px; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #121214; color: #fff; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.35); border-inline-start: 4px solid var(--accent); max-width: 520px; margin-inline: auto; font-family: var(--f-ui); }
+  .install-app[hidden] { display: none; }
+  .install-app img { border-radius: 9px; flex-shrink: 0; }
+  .install-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 1.6; }
+  .install-text span { color: #C9C9D1; font-size: 13px; }
+  .install-go { background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 9px 16px; font: 700 14px var(--f-ui); cursor: pointer; }
+  .install-go:hover { background: var(--accent-hover); }
+  .install-go[hidden] { display: none; }
+  .install-close { background: none; border: 0; color: #A9A9B2; font-size: 22px; line-height: 1; cursor: pointer; padding: 4px; }
+</style>
+<script is:inline>
+  (function () {
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () {});
+    var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    if (standalone) return;
+    var box = document.getElementById('install-app');
+    var go = document.getElementById('install-go');
+    var hint = document.getElementById('install-hint');
+    var dismissed = false;
+    try { dismissed = Date.now() - Number(localStorage.getItem('axiom-install-dismissed') || 0) < 7 * 864e5; } catch (e) {}
+    if (dismissed) return;
+    var deferred = null;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      deferred = e;
+      box.hidden = false;
+    });
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    if (ios) {
+      hint.textContent = 'اضغط زرّ المشاركة ثمّ "إضافة إلى الشاشة الرئيسية".';
+      go.hidden = true;
+      setTimeout(function () { box.hidden = false; }, 4000);
+    }
+    go.addEventListener('click', function () {
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.finally(function () { deferred = null; box.hidden = true; });
+    });
+    document.getElementById('install-close').addEventListener('click', function () {
+      box.hidden = true;
+      try { localStorage.setItem('axiom-install-dismissed', String(Date.now())); } catch (e) {}
+    });
+    window.addEventListener('appinstalled', function () { box.hidden = true; });
+  })();
+</script>

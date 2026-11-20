@@ -1,0 +1,22 @@
+name: النشرة الصوتية
+on:
+  schedule:
+    - cron: '25 * * * *'
+  workflow_dispatch:
+concurrency: bulletin
+jobs:
+  bulletin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/bulletin.mjs
+        env:
+          SANITY_PROJECT_ID: 9rw3viyf
+          SANITY_DATASET: production
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: eastus

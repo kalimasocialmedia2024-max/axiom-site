@@ -69,6 +69,16 @@ for (const f of feeds) {
       .filter((i) => !i.date || isNaN(i.date) || Date.now() - i.date.getTime() < MAX_AGE_H * 3600e3)
       .slice(0, f.limit || 6);
 
+    // حين لا تحمل الخلاصة صورة، نأخذ صورة المشاركة (og:image) من صفحة الخبر نفسها.
+    for (const i of fresh) {
+      if (i.image || /news\.google\./.test(i.link)) continue;
+      try {
+        const h = await get(i.link);
+        const m = h.match(/<meta[^>]+(?:property|name)=["'](?:og:image|twitter:image)["'][^>]*content=["']([^"']+)/i) || h.match(/<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image|twitter:image)["']/i);
+        if (m && !/logo/i.test(m[1])) i.image = decode(m[1]).trim();
+      } catch {}
+    }
+
     const muts = fresh.map((i) => {
       const id = `feed-${hash(i.link)}`;
       return {

@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getData, byWriter } from '../../lib/sanity.js';
+
+const data = await getData();
+const writers = data.writers.map((w) => ({ ...w, count: byWriter(data.articles, w.slug).length }));
+---
+<Base title="الكتّاب" description="كتّاب AXIOM+ ومحلّلوها" active="/writers/">
+  <section class="page-head">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span><span>الكتّاب</span></nav>
+      <h1>الكتّاب</h1>
+      <p>كتّاب AXIOM+ ومحلّلوها</p>
+    </div>
+  </section>
+  <main class="wrap" style="padding-top:32px">
+    {writers.length === 0 && <p class="empty">لم تُضف صفحات الكتّاب بعد.</p>}
+    <div class="grid" style="--min:280px;gap:20px">
+      {writers.map((w) => (
+        <a href={`/writers/${w.slug}/`} class="writer-card">
+          <div class="who">
+            <div class="avatar" style="width:72px;height:72px">{w.photo ? <img src={`${w.photo}?w=144&h=144&fit=crop`} alt="" /> : 'صورة'}</div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span class="kufi" style="font-weight:700;font-size:17px">{w.name}</span>
+              {w.role && <span class="meta">{w.role}</span>}
+            </div>
+          </div>
+          {w.bio && <span style="font-size:14px;line-height:1.8;color:var(--ink2)">{w.bio}</span>}
+          <span class="meta">{w.count} مادّة</span>
+        </a>
+      ))}
+    </div>
+  </main>
+</Base>

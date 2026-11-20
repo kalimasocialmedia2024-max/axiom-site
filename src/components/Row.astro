@@ -1,0 +1,20 @@
+---
+// سطر مادّة في القوائم (صفحة القسم وصفحة الكاتب).
+import Img from './Img.astro';
+import { articleUrl, KINDS, sectionTitle } from '../lib/config.js';
+import { fmtDate } from '../lib/format.js';
+const { a, extra = false } = Astro.props;
+const tag = a.kind === 'news' ? sectionTitle(a.section) || KINDS.news.badge : KINDS[a.kind]?.badge;
+---
+<article class="row" data-extra={extra ? '' : undefined} hidden={extra}>
+  <a href={articleUrl(a)} tabindex="-1" aria-hidden="true" style="flex:0 1 260px"><Img src={a.image?.url} alt="" ratio="r32" w={520} /></a>
+  <div class="txt">
+    <div style="display:flex;gap:10px;align-items:center">
+      {tag && <span class="tag">{tag}</span>}
+      {a.kind === 'news' && a.source && <span class="agency">{a.source}</span>}
+    </div>
+    <h3><a href={articleUrl(a)}>{a.title}</a></h3>
+    {a.excerpt && <p>{a.excerpt}</p>}
+    <span class="meta">{fmtDate(a.publishedAt)}</span>
+  </div>
+</article>

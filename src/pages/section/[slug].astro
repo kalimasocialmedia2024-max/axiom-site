@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import ListingPage from '../../components/ListingPage.astro';
+import { getData, bySection } from '../../lib/sanity.js';
+import { SECTIONS, sectionUrl } from '../../lib/config.js';
+
+export function getStaticPaths() {
+  return SECTIONS.map((s) => ({ params: { slug: s.slug }, props: { section: s } }));
+}
+
+const { section } = Astro.props;
+const data = await getData();
+// القسم يجمع الأخبار والتحليلات والموادّ الأخرى الموسومة به.
+const items = bySection(data.articles, section.slug).slice(0, 200);
+const pills = [{ label: 'كلّ الأخبار', href: '/news/' }, ...SECTIONS.map((s) => ({ label: s.title, href: sectionUrl(s.slug) }))];
+---
+<Base title={section.title} description={section.description} active={sectionUrl(section.slug)}>
+  <ListingPage title={section.title} description={section.description} items={items} pills={pills} activePill={sectionUrl(section.slug)} />
+</Base>

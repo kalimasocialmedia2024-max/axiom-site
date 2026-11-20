@@ -1,0 +1,49 @@
+---
+// قالب التحليل: خلاصة في أعلى النصّ، وعناوين فرعية، وبطاقة الكاتب.
+import Img from '../Img.astro';
+import Share from '../Share.astro';
+import MostRead from '../MostRead.astro';
+import Related from '../Related.astro';
+import Tags from '../Tags.astro';
+import Ad from '../Ad.astro';
+import Byline from '../Byline.astro';
+import AuthorBox from '../AuthorBox.astro';
+import { getData, related } from '../../lib/sanity.js';
+import { renderBody } from '../../lib/portableText.js';
+import { SITE } from '../../lib/config.js';
+
+const { a } = Astro.props;
+const data = await getData();
+const ad = SITE.showAdSlots ? '<div class="ad" style="max-width:300px;height:250px">مساحة إعلانية داخل النصّ</div>' : '';
+const body = renderBody(a.body, { inlineAdAfter: 3, adHtml: ad });
+---
+<div class="wrap article-wrap">
+  <article class="article-main">
+    <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span><a href="/analysis/">الوحدة التحليلية</a></nav>
+    <span class="badge">الوحدة التحليلية</span>
+    <h1 class="a-title">{a.title}</h1>
+    {a.subtitle && <p class="a-sub">{a.subtitle}</p>}
+    <Byline a={a} />
+    {(a.summary || []).length > 0 && (
+      <section class="panel top" aria-label="الخلاصة">
+        <h2>الخلاصة</h2>
+        <ul>{a.summary.map((s) => <li>{s}</li>)}</ul>
+      </section>
+    )}
+    <Share title={a.title} />
+    {a.image?.url && (
+      <figure class="fig">
+        <Img src={a.image.url} alt={a.image.alt || ''} ratio="r169" w={1280} eager />
+        {(a.image.caption || a.image.credit) && <figcaption>{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
+      </figure>
+    )}
+    <Fragment set:html={body.html} />
+    {a.authors.map((w) => <AuthorBox w={w} />)}
+    <Tags tags={a.tags} />
+  </article>
+  <aside class="article-side">
+    <MostRead />
+    <Ad w={300} h={600} />
+  </aside>
+</div>
+<Related title="تحليلات ذات صلة" items={related(data, a)} />

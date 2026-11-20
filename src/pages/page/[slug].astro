@@ -1,0 +1,26 @@
+---
+// الصفحات الثابتة (من نحن، الميثاق التحريري، سياسة التصحيح...) تُكتب في لوحة التحرير.
+import Base from '../../layouts/Base.astro';
+import { getData } from '../../lib/sanity.js';
+import { renderBody } from '../../lib/portableText.js';
+import { FOOTER_LINKS } from '../../lib/config.js';
+
+export async function getStaticPaths() {
+  const data = await getData();
+  const fromCms = data.pages.map((p) => ({ params: { slug: p.slug }, props: { page: p } }));
+  const have = new Set(data.pages.map((p) => p.slug));
+  const placeholders = [...FOOTER_LINKS.map((l) => ({ slug: l.href.split('/')[2], title: l.label })), { slug: 'privacy', title: 'سياسة الخصوصية' }, { slug: 'terms', title: 'شروط الاستخدام' }]
+    .filter((p) => !have.has(p.slug))
+    .map((p) => ({ params: { slug: p.slug }, props: { page: { ...p, body: [] } } }));
+  return [...fromCms, ...placeholders];
+}
+
+const { page } = Astro.props;
+const body = renderBody(page.body || []);
+---
+<Base title={page.title}>
+  <section class="page-head"><div class="wrap"><h1>{page.title}</h1></div></section>
+  <article class="narrow">
+    {body.html ? <Fragment set:html={body.html} /> : <p class="empty">تُنشر هذه الصفحة قريباً.</p>}
+  </article>
+</Base>

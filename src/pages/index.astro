@@ -1,0 +1,195 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Card from '../components/Card.astro';
+import MostRead from '../components/MostRead.astro';
+import Ad from '../components/Ad.astro';
+import { getData, byKind, bySection } from '../lib/sanity.js';
+import { articleUrl, KINDS, SECTIONS, sectionTitle, sectionUrl } from '../lib/config.js';
+import { readingTime, authorNames } from '../lib/format.js';
+
+const data = await getData();
+const A = data.articles;
+const analyses = byKind(A, 'analysis');
+const lead = A.find((a) => a.featured) || analyses[0] || A[0];
+const used = new Set(lead ? [lead.slug] : []);
+const pick = (list, n) => {
+  const out = list.filter((a) => !used.has(a.slug)).slice(0, n);
+  out.forEach((a) => used.add(a.slug));
+  return out;
+};
+const side = pick(A.filter((a) => a.kind !== 'study'), 4);
+const three = pick(analyses, 3);
+const opinions = pick(byKind(A, 'opinion'), 4);
+const invLead = pick(byKind(A, 'investigation'), 1)[0];
+const specials = pick([...byKind(A, 'special'), ...byKind(A, 'investigation')], 3);
+const latestAudio = data.episodes.find((e) => e.mediaType === 'audio');
+const episodes = data.episodes.filter((e) => e.mediaType !== 'audio').slice(0, 3);
+const regions = SECTIONS.map((s) => ({ ...s, items: bySection(byKind(A, 'news'), s.slug).slice(0, 4) })).filter((r) => r.items.length);
+const tagOf = (a) => (a.kind === 'news' ? sectionTitle(a.section) || 'أخبار' : KINDS[a.kind]?.badge);
+const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>';
+---
+<Base showBreaking>
+  <main class="wrap home">
+    <Ad w={728} h={90} />
+
+    {lead && (
+      <section class="hero" aria-label="الواجهة">
+        <article class="hero-main">
+          <a href={articleUrl(lead)} tabindex="-1" aria-hidden="true"><Img src={lead.image?.url} alt="" ratio="r169" w={1280} label="صورة التحليل الرئيسي" eager /></a>
+          <span class="tag" style="font-size:14px">{tagOf(lead)}</span>
+          <h1><a href={articleUrl(lead)}>{lead.title}</a></h1>
+          {lead.excerpt && <p>{lead.excerpt}</p>}
+          <span class="meta" style="font-size:14px">{[authorNames(lead), readingTime(lead)].filter(Boolean).join(' · ')}</span>
+        </article>
+        <div class="hero-side">
+          {side.map((a) => (
+            <article class="side-item">
+              <a href={articleUrl(a)} tabindex="-1" aria-hidden="true"><Img src={a.image?.url} alt="" ratio="" w={240} cls="" style="width:120px;height:84px;flex-shrink:0" /></a>
+              <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                <span class="tag" style="font-size:12px">{tagOf(a)}</span>
+                <h3><a href={articleUrl(a)}>{a.title}</a></h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="cols">
+      <section class="col-main">
+        <div class="h-sec"><h2>الوحدة التحليلية</h2><a href="/analysis/">عرض الكلّ</a></div>
+        <div class="grid" style="--min:240px">
+          {three.map((a) => <Card a={a} excerpt showTag={false} showAuthor />)}
+        </div>
+      </section>
+      <aside class="col-side">
+        <MostRead />
+        <Ad w={300} h={250} />
+      </aside>
+    </div>
+
+    {opinions.length > 0 && (
+      <section style="display:flex;flex-direction:column;gap:22px">
+        <div class="h-sec"><h2>الكتّاب والرأي</h2><a href="/opinion/">جميع مقالات الرأي</a></div>
+        <div class="grid" style="--min:270px;gap:20px">
+          {opinions.map((a) => {
+            const w = a.authors[0] || {};
+            return (
+              <a class="writer-card" href={articleUrl(a)}>
+                <div class="who">
+                  <div class="avatar" style="width:72px;height:72px">{w.photo ? <img src={`${w.photo}?w=144&h=144&fit=crop`} alt="" /> : 'صورة'}</div>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <span class="kufi" style="font-weight:700;font-size:16px">{w.name}</span>
+                    <span class="meta">{w.role}</span>
+                  </div>
+                </div>
+                <span class="kufi" style="font-weight:700;font-size:18px;line-height:1.6">{a.title}</span>
+                {a.excerpt && <span style="font-size:14px;line-height:1.8;color:var(--ink2)">{a.excerpt}</span>}
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+  </main>
+
+  {(invLead || specials.length > 0) && (
+    <section class="dark-band" style="margin-top:64px">
+      <div class="wrap band-in">
+        <div class="h-sec" style="border-color:var(--accent)"><h2 style="font-size:28px">تحقيقات وخاصّ</h2><a href="/investigations/">جميع التحقيقات</a></div>
+        {invLead && (
+          <article style="display:flex;flex-wrap:wrap;gap:32px;align-items:center">
+            <a href={articleUrl(invLead)} tabindex="-1" aria-hidden="true" style="flex:3 1 520px"><Img src={invLead.image?.url} alt="" ratio="r169" w={1000} label="صورة التحقيق" /></a>
+            <div style="flex:2 1 340px;display:flex;flex-direction:column;gap:14px">
+              <span class="badge">تحقيق</span>
+              <h3 class="kufi" style="margin:0;font-weight:800;font-size:30px;line-height:1.5"><a href={articleUrl(invLead)}>{invLead.title}</a></h3>
+              {invLead.excerpt && <p class="sub" style="margin:0;font-size:17px;line-height:1.9">{invLead.excerpt}</p>}
+              <span class="sub" style="font-size:14px">{[invLead.researchTeam || authorNames(invLead), readingTime(invLead)].filter(Boolean).join(' · ')}</span>
+            </div>
+          </article>
+        )}
+        <div class="grid" style="--min:300px">
+          {specials.map((a) => (
+            <a href={articleUrl(a)} style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #2C2C32;padding-top:16px">
+              <span class="kufi" style="color:var(--accent-soft);font-weight:700;font-size:13px">{KINDS[a.kind].badge}</span>
+              <span class="kufi" style="font-weight:700;font-size:18px;line-height:1.6">{a.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {(latestAudio || episodes.length > 0) && (
+    <section class="dark-band deep">
+      <div class="wrap band-in" style="padding-block:48px;gap:28px">
+        {latestAudio && (
+          <div class="audio-bar">
+            {latestAudio.audio
+              ? <button type="button" class="play" aria-label="تشغيل النشرة الصوتية" data-audio="home-audio" set:html={play}></button>
+              : <a class="play" href={`/media/${latestAudio.slug}/`} aria-label="الاستماع إلى النشرة الصوتية" set:html={play}></a>}
+            <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 260px;min-width:0">
+              <span class="kufi" style="font-weight:700;font-size:13px;color:var(--accent-soft)">النشرة الصوتية</span>
+              <span class="kufi" style="font-weight:700;font-size:17px">{latestAudio.title}</span>
+            </div>
+            {latestAudio.audio && <audio id="home-audio" src={latestAudio.audio} preload="none" controls style="flex:2 1 280px;height:36px"></audio>}
+            <a href="/media/?type=audio" style="font-size:14px;font-weight:600">النشرات السابقة</a>
+          </div>
+        )}
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <h2 class="kufi" style="margin:0;font-weight:800;font-size:28px">بودكاست AXIOM+</h2>
+            <p class="sub" style="margin:0;font-size:16px">حوارات معمّقة مع صنّاع القرار والمحلّلين، من الاستوديو والميدان</p>
+          </div>
+          <a href="/media/" style="border:1px solid #fff;border-radius:22px;padding:10px 22px;font-size:14px;font-weight:600">جميع الحلقات</a>
+        </div>
+        <div class="grid" style="--min:300px">
+          {episodes.map((e) => (
+            <a href={`/media/${e.slug}/`} style="display:flex;flex-direction:column;gap:12px">
+              <div class="thumb">
+                <Img src={e.cover} alt="" ratio="r169" label="" />
+                <span class="play" set:html={play}></span>
+              </div>
+              <span class="kufi" style="font-weight:700;font-size:17px;line-height:1.6">{e.title}</span>
+              <span class="sub" style="font-size:13px">{[e.guest, e.duration].filter(Boolean).join(' · ')}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {regions.length > 0 && (
+    <div class="wrap" style="padding-top:56px">
+      <div class="grid" style="--min:300px;gap:32px">
+        {regions.map((r) => (
+          <section style="display:flex;flex-direction:column;gap:14px">
+            <div class="h-sec" style="padding-bottom:8px"><h2 style="font-size:22px">{r.title}</h2><a href={sectionUrl(r.slug)} style="font-size:13px">المزيد</a></div>
+            <a href={articleUrl(r.items[0])} tabindex="-1" aria-hidden="true"><Img src={r.items[0].image?.url} alt="" ratio="r169" w={640} /></a>
+            <h3 class="kufi" style="margin:0;font-weight:700;font-size:18px;line-height:1.6"><a href={articleUrl(r.items[0])}>{r.items[0].title}</a></h3>
+            {r.items.slice(1).map((a) => (
+              <a href={articleUrl(a)} style="font-size:15px;line-height:1.7;padding:8px 0;border-top:1px solid var(--line)">{a.title}</a>
+            ))}
+          </section>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="wrap" style="padding-top:56px"><Ad w={970} h={90} /></div>
+
+  <div class="wrap" style="padding-block:56px 0">
+    <form class="box newsletter" action="/api/subscribe" method="post">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 320px">
+        <h2 class="kufi" style="margin:0;font-weight:800;font-size:22px">النشرة اليومية</h2>
+        <p style="margin:0;font-size:15px;color:var(--ink2)">أهمّ التحليلات في بريدك كلّ صباح</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;flex:1 1 380px">
+        <label for="nl-email" class="sr-only">البريد الإلكتروني</label>
+        <input id="nl-email" name="email" type="email" required placeholder="بريدك الإلكتروني" autocomplete="email">
+        <button type="submit" class="btn red" style="border-radius:4px">اشترك</button>
+      </div>
+    </form>
+  </div>
+</Base>

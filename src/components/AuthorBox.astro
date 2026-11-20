@@ -1,0 +1,22 @@
+---
+const { w, dark = false, label = 'جميع تحليلات الكاتب' } = Astro.props;
+---
+{dark ? (
+  <section class="author-dark">
+    <div class="avatar" style="width:88px;height:88px;background:#26262B;color:#BDBDC4">{w.photo ? <img src={`${w.photo}?w=176&h=176&fit=crop`} alt="" /> : 'صورة'}</div>
+    <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 260px">
+      <span class="kufi" style="font-weight:800;font-size:18px">{w.name}</span>
+      {w.bio && <span style="font-size:14px;line-height:1.8;color:#BDBDC4">{w.bio}</span>}
+      <a href={`/writers/${w.slug}/`} style="font-size:14px;font-weight:600">صفحة الكاتب</a>
+    </div>
+  </section>
+) : (
+  <div class="box author-box">
+    <div class="avatar" style="width:72px;height:72px">{w.photo ? <img src={`${w.photo}?w=144&h=144&fit=crop`} alt="" /> : 'صورة'}</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span class="kufi" style="font-weight:700;font-size:16px">{w.name}</span>
+      {w.bio && <span style="font-size:14px;line-height:1.8;color:var(--ink2)">{w.bio}</span>}
+      <a href={`/writers/${w.slug}/`} style="font-size:14px;font-weight:600;color:var(--accent)">{label}</a>
+    </div>
+  </div>
+)}

@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import News from '../../components/templates/News.astro';
+import Analysis from '../../components/templates/Analysis.astro';
+import Opinion from '../../components/templates/Opinion.astro';
+import Investigation from '../../components/templates/Investigation.astro';
+import Study from '../../components/templates/Study.astro';
+import { getData } from '../../lib/sanity.js';
+import { KINDS } from '../../lib/config.js';
+
+export async function getStaticPaths() {
+  const data = await getData();
+  return data.articles
+    .filter((a) => KINDS[a.kind])
+    .map((a) => ({ params: { kind: KINDS[a.kind].path, slug: a.slug }, props: { article: a } }));
+}
+
+const { article: a } = Astro.props;
+const T = { news: News, analysis: Analysis, opinion: Opinion, investigation: Investigation, special: Investigation, study: Study }[a.kind] || News;
+---
+<Base title={a.title} description={a.excerpt || a.subtitle} image={a.image?.url} type="article" active={`/${KINDS[a.kind].path}/`}>
+  <T a={a} />
+</Base>

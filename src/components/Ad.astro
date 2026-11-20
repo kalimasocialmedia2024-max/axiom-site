@@ -1,0 +1,8 @@
+---
+// مساحة إعلانية: تظهر فقط حين تُفعَّل SITE.showAdSlots في src/lib/config.js
+import { SITE } from '../lib/config.js';
+const { w = 300, h = 250, label } = Astro.props;
+---
+{SITE.showAdSlots && (
+  <div class="ad" style={`max-width:${w}px;height:${h}px`}>{label || `مساحة إعلانية ${w}×${h}`}</div>
+)}

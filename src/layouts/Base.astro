@@ -1,0 +1,102 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Breaking from '../components/Breaking.astro';
+import { SITE } from '../lib/config.js';
+import { getData } from '../lib/sanity.js';
+
+const { title, description = SITE.description, image, type = 'website', active = '', showBreaking = false } = Astro.props;
+const data = await getData();
+const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name}: ${SITE.slogan}`;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{fullTitle}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta property="og:site_name" content={SITE.name}>
+  <meta property="og:title" content={title || SITE.name}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content={type}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={image ? `${image}?w=1200&h=630&fit=crop&auto=format` : new URL('/brand/og-default.png', SITE.url).href}>
+  <meta property="og:locale" content="ar_AR">
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'NewsMediaOrganization',
+    name: SITE.name,
+    alternateName: 'أكسيوم بلس',
+    url: SITE.url,
+    logo: { '@type': 'ImageObject', url: new URL('/brand/logo-square.png', SITE.url).href, width: 512, height: 512 },
+  })} />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#0E0E10">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@600;700;800;900&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+  <script is:inline>
+    try {
+      var t = localStorage.getItem('axiom-theme');
+      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.dataset.theme = 'dark';
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">انتقل إلى المحتوى</a>
+  {data.sample && <div class="preview-note">نسخة معاينة: المحتوى الظاهر قوالب فارغة إلى أن تُربط لوحة التحرير.</div>}
+  <Header active={active} />
+  {showBreaking && <Breaking />}
+  <div id="main">
+    <slot />
+  </div>
+  <Footer />
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      if (btn) btn.addEventListener('click', function () {
+        var root = document.documentElement;
+        var dark = root.dataset.theme === 'dark';
+        if (dark) delete root.dataset.theme; else root.dataset.theme = 'dark';
+        btn.setAttribute('aria-label', dark ? 'الوضع الداكن' : 'الوضع الفاتح');
+        try { localStorage.setItem('axiom-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      });
+      var d = document.getElementById('today');
+      if (d) {
+        var now = new Date();
+        var hijri = '', greg = '';
+        try { hijri = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }).format(now); } catch (e) {}
+        try { greg = new Intl.DateTimeFormat('ar-LB-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Beirut' }).format(now); } catch (e) {}
+        d.textContent = greg + (hijri ? ' · ' + hijri : '');
+      }
+      document.querySelectorAll('[data-copy]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var text = b.getAttribute('data-copy') || location.href;
+          if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () {
+            var old = b.textContent; b.textContent = 'نُسخ'; setTimeout(function () { b.textContent = old; }, 1500);
+          });
+        });
+      });
+      document.querySelectorAll('[data-audio]').forEach(function (b) {
+        var a = document.getElementById(b.getAttribute('data-audio'));
+        if (a) b.addEventListener('click', function () { if (a.paused) a.play(); else a.pause(); });
+      });
+      document.querySelectorAll('[data-more]').forEach(function (b) {
+        var list = document.getElementById(b.getAttribute('data-more'));
+        if (!list) return;
+        b.addEventListener('click', function () {
+          var hidden = list.querySelectorAll('[data-extra][hidden]');
+          for (var i = 0; i < Math.min(10, hidden.length); i++) hidden[i].hidden = false;
+          if (hidden.length <= 10) b.hidden = true;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

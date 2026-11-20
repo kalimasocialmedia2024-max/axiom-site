@@ -1,0 +1,41 @@
+---
+import { MAIN_NAV, SUB_NAV, SOCIAL } from '../lib/config.js';
+import Logo from './Logo.astro';
+const { active = '' } = Astro.props;
+const cur = (href) => (active && href.startsWith(active) ? 'page' : undefined);
+---
+<div class="topbar">
+  <div class="wrap">
+    <span id="today"></span>
+    <div class="links">
+      {SOCIAL.map((s) => <a href={s.href} aria-label={s.aria} rel="noopener">{s.label}</a>)}
+      <span class="sep" aria-hidden="true">|</span>
+      <a href="/page/about/">من نحن</a>
+    </div>
+  </div>
+</div>
+<header>
+  <div class="masthead">
+    <div class="wrap">
+      <a href="/" aria-label="AXIOM+، الصفحة الرئيسية"><Logo /></a>
+      <nav class="nav mainnav" aria-label="الأقسام">
+        {MAIN_NAV.map((n) => <a href={n.href} aria-current={cur(n.href)}>{n.label}</a>)}
+      </nav>
+      <div class="tools">
+        <button type="button" id="theme-toggle" class="icon-btn round" aria-label="تبديل الوضع الداكن والفاتح">
+          <svg class="theme-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+          <svg class="theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"></line><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"></line><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"></line><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"></line></svg>
+        </button>
+        <a class="icon-btn round" href="/search/" aria-label="بحث">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="redline"></div>
+  <div class="subnav-bar">
+    <nav class="nav subnav wrap" aria-label="المحتوى التحليلي">
+      {SUB_NAV.map((n) => <a href={n.href} aria-current={cur(n.href)}>{n.label}</a>)}
+    </nav>
+  </div>
+</header>

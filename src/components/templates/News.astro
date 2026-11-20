@@ -1,0 +1,53 @@
+---
+// قالب الخبر: يُنشر باسم الشبكة بلا اسم المحرّر، مع المصدر والسياق.
+import Img from '../Img.astro';
+import Share from '../Share.astro';
+import MostRead from '../MostRead.astro';
+import Related from '../Related.astro';
+import Tags from '../Tags.astro';
+import Ad from '../Ad.astro';
+import { getData, related } from '../../lib/sanity.js';
+import { renderBody } from '../../lib/portableText.js';
+import { sectionTitle, sectionUrl } from '../../lib/config.js';
+import { fmtDateTime, fmtTime } from '../../lib/format.js';
+import { SITE } from '../../lib/config.js';
+
+const { a } = Astro.props;
+const data = await getData();
+const sec = sectionTitle(a.section);
+const ad = SITE.showAdSlots ? '<div class="ad" style="max-width:300px;height:250px">مساحة إعلانية داخل النصّ</div>' : '';
+const body = renderBody(a.body, { inlineAdAfter: 3, adHtml: ad });
+const updated = a.updatedAt && Date.parse(a.updatedAt) - Date.parse(a.publishedAt) > 10 * 60000;
+---
+<div class="wrap article-wrap">
+  <article class="article-main" style="gap:20px">
+    <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span>{sec ? <a href={sectionUrl(a.section)}>{sec}</a> : <a href="/news/">أخبار</a>}</nav>
+    <span class="badge">{sec || 'خبر'}</span>
+    <h1 class="a-title" style="font-size:clamp(26px,3vw,34px)">{a.title}</h1>
+    <div class="a-meta">
+      <span>نُشر: {fmtDateTime(a.publishedAt)}</span>
+      {updated && <span>آخر تحديث: {fmtTime(a.updatedAt)}</span>}
+      {a.source && <span style="color:var(--ink);font-weight:600">المصدر: {a.source}</span>}
+    </div>
+    <Share title={a.title} />
+    {a.image?.url && (
+      <figure class="fig">
+        <Img src={a.image.url} alt={a.image.alt || ''} ratio="r169" w={1280} eager />
+        {(a.image.caption || a.image.credit) && <figcaption>{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
+      </figure>
+    )}
+    <Fragment set:html={body.html} />
+    {a.context && (
+      <div class="panel">
+        <span class="kufi" style="font-weight:700;font-size:15px">سياق الخبر</span>
+        <span style="font-size:15px;line-height:1.9;color:var(--ink2)">{a.context}</span>
+      </div>
+    )}
+    <Tags tags={a.tags} />
+  </article>
+  <aside class="article-side">
+    <MostRead />
+    <Ad w={300} h={600} />
+  </aside>
+</div>
+<Related title="أخبار ذات صلة" items={related(data, a)} />

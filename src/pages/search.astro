@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="بحث">
+  <section class="page-head">
+    <div class="wrap">
+      <h1>بحث</h1>
+      <form role="search" style="display:flex;flex-wrap:wrap;gap:10px;max-width:720px" onsubmit="return false">
+        <label for="q" class="sr-only">كلمات البحث</label>
+        <input id="q" type="search" placeholder="ابحث في AXIOM+" autocomplete="off" style="flex:1 1 260px;height:48px;border:1px solid var(--line2);border-radius:4px;padding:0 14px;font:inherit;font-size:16px;background:var(--card);color:var(--ink)">
+      </form>
+    </div>
+  </section>
+  <main class="wrap" style="max-width:900px">
+    <p id="status" class="meta" style="padding-top:16px" aria-live="polite"></p>
+    <div id="results"></div>
+  </main>
+  <script is:inline>
+    (function () {
+      var input = document.getElementById('q'), out = document.getElementById('results'), status = document.getElementById('status');
+      var norm = function (s) { return (s || '').replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase(); };
+      var esc = function (s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; };
+      var index = null;
+      fetch('/search.json').then(function (r) { return r.json(); }).then(function (d) {
+        index = d.map(function (x) { x._s = norm([x.t, x.e, x.g, x.w].join(' ')); return x; });
+        run();
+      });
+      function run() {
+        if (!index) return;
+        var q = norm(input.value.trim());
+        history.replaceState(null, '', q ? '?q=' + encodeURIComponent(input.value.trim()) : location.pathname);
+        if (!q) { out.innerHTML = ''; status.textContent = ''; return; }
+        var words = q.split(/\s+/);
+        var hits = index.filter(function (x) { return words.every(function (w) { return x._s.indexOf(w) > -1; }); }).slice(0, 50);
+        status.textContent = hits.length ? hits.length + ' نتيجة' : 'لا نتائج';
+        out.innerHTML = hits.map(function (x) {
+          return '<article class="row"><div class="txt"><span class="tag">' + esc(x.k) + '</span><h3><a href="' + esc(x.u) + '">' + esc(x.t) + '</a></h3>' + (x.e ? '<p>' + esc(x.e) + '</p>' : '') + '</div></article>';
+        }).join('');
+      }
+      input.value = new URLSearchParams(location.search).get('q') || '';
+      input.addEventListener('input', run);
+      input.focus();
+    })();
+  </script>
+</Base>

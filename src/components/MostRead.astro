@@ -1,0 +1,14 @@
+---
+import { getData, mostRead } from '../lib/sanity.js';
+import { articleUrl } from '../lib/config.js';
+const data = await getData();
+const items = mostRead(data, 5);
+---
+{items.length > 0 && (
+  <section class="most" aria-labelledby="most-h">
+    <h2 id="most-h">الأكثر قراءة</h2>
+    {items.map((a, i) => (
+      <a href={articleUrl(a)}><span class="n">{i + 1}</span><span class="tt">{a.title}</span></a>
+    ))}
+  </section>
+)}

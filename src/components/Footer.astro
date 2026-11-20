@@ -1,0 +1,27 @@
+---
+import { BRAND } from '../lib/brand.js';
+import { MAIN_NAV, SUB_NAV, SOCIAL, FOOTER_LINKS, SITE } from '../lib/config.js';
+const year = new Date().getFullYear();
+---
+<footer class="foot">
+  <div class="wrap">
+    <div class="r">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        {BRAND.logo
+          ? <img src={BRAND.logo} alt={`${SITE.name}: ${SITE.slogan}`} style="height:56px;width:auto">
+          : <span class="kufi" style="font-weight:800;font-size:26px;color:#fff" dir="ltr">{SITE.name}</span>}
+      </div>
+      <nav aria-label="روابط التذييل">
+        {[...MAIN_NAV, ...SUB_NAV].map((n) => <a href={n.href}>{n.label}</a>)}
+      </nav>
+    </div>
+    <div class="r">
+      <div class="links" style="gap:20px">{FOOTER_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}</div>
+      <div class="links">{SOCIAL.map((s) => <a href={s.href} aria-label={s.aria} rel="noopener">{s.label}</a>)}</div>
+    </div>
+    <div class="r">
+      <span>© {year} {SITE.name}</span>
+      <div class="links" style="gap:20px"><a href="/page/privacy/">سياسة الخصوصية</a><a href="/page/terms/">شروط الاستخدام</a></div>
+    </div>
+  </div>
+</footer>

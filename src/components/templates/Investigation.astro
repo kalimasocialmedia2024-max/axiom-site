@@ -1,0 +1,50 @@
+---
+// قالب التحقيق وخاصّ: واجهة داكنة، محاور مرقّمة، وثائق، ومنهجية.
+import Img from '../Img.astro';
+import Share from '../Share.astro';
+import Related from '../Related.astro';
+import Tags from '../Tags.astro';
+import { getData, byKind } from '../../lib/sanity.js';
+import { renderBody } from '../../lib/portableText.js';
+import { KINDS, SITE } from '../../lib/config.js';
+import { fmtDate, readingTime, authorNames } from '../../lib/format.js';
+
+const { a } = Astro.props;
+const data = await getData();
+const ad = SITE.showAdSlots ? '<div class="ad" style="max-width:300px;height:250px">مساحة إعلانية داخل النصّ</div>' : '';
+const body = renderBody(a.body, { numberH2: true, inlineAdAfter: 5, adHtml: ad });
+const team = a.researchTeam || authorNames(a);
+const more = [...byKind(data.articles, 'investigation'), ...byKind(data.articles, 'special')].filter((x) => x.slug !== a.slug).slice(0, 3);
+---
+<section class="dark-band inv-hero">
+  <div class="in">
+    <span class="badge">{KINDS[a.kind].badge}</span>
+    <h1>{a.title}</h1>
+    {(a.subtitle || a.excerpt) && <p class="sub" style="margin:0;font-size:20px;line-height:1.9">{a.subtitle || a.excerpt}</p>}
+    <span class="sub" style="font-size:14px">{[team && `فريق التحقيق: ${team}`, fmtDate(a.publishedAt), readingTime(a)].filter(Boolean).join(' · ')}</span>
+  </div>
+</section>
+{a.image?.url ? (
+  <figure style="margin:0">
+    <Img src={a.image.url} alt={a.image.alt || ''} ratio="r219" w={2000} eager style="border-radius:0" />
+    {(a.image.caption || a.image.credit) && <figcaption class="wrap meta" style="padding-top:8px">{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
+  </figure>
+) : <div class="ph r219" style="border-radius:0" aria-hidden="true">صورة عريضة للتحقيق</div>}
+<article class="narrow">
+  <Share title={a.title} />
+  {body.headings.filter((h) => h.n).length > 1 && (
+    <nav class="box toc" aria-label="محاور التحقيق" style="padding:20px 24px;display:flex;flex-direction:column">
+      <h2 class="kufi" style="margin:0 0 6px;font-weight:800;font-size:18px">محاور التحقيق</h2>
+      {body.headings.filter((h) => h.n).map((h) => <a href={`#${h.id}`}><span class="n">{h.n}</span><span>{h.text}</span></a>)}
+    </nav>
+  )}
+  <Fragment set:html={body.html} />
+  {a.methodology && (
+    <section style="background:var(--soft);border-radius:8px;padding:22px 24px;display:flex;flex-direction:column;gap:8px">
+      <h2 class="kufi" style="margin:0;font-weight:800;font-size:18px">منهجية التحقيق</h2>
+      <p style="margin:0;font-size:15px;line-height:1.9;color:var(--ink2)">{a.methodology}</p>
+    </section>
+  )}
+  <Tags tags={a.tags} />
+</article>
+<Related title="تحقيقات أخرى" items={more} />

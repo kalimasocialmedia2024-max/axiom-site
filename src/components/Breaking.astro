@@ -1,0 +1,42 @@
+---
+import { getData } from '../lib/sanity.js';
+import { articleUrl } from '../lib/config.js';
+const data = await getData();
+const dayAgo = Date.now() - 36 * 3600 * 1000;
+const items = data.articles.filter((a) => a.breaking && (data.sample || Date.parse(a.publishedAt) > dayAgo)).slice(0, 6);
+const manual = data.settings.breakingText;
+const s = data.settings;
+const showMarkets = (s.markets || []).length || (s.matches || []).length;
+---
+{(items.length > 0 || manual) && (
+  <div class="strip breaking" role="region" aria-label="عاجل">
+    <div class="wrap">
+      <span class="badge">عاجل</span>
+      <div class="ticker">
+        <div class="ticker-track">
+          {[0, 1].map((k) => (
+            <span class="tick-group" aria-hidden={k === 1 ? 'true' : undefined}>
+              {[...(manual ? [{ manual }] : []), ...items].map((a) => (
+                <>
+                  {a.manual ? <span>{a.manual}</span> : <a href={articleUrl(a)} tabindex={k === 1 ? '-1' : undefined}>{a.title}</a>}
+                  <img class="tick-sep" src="/brand/icon-red.png" alt="" aria-hidden="true">
+                </>
+              ))}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+{showMarkets ? (
+  <div class="strip markets">
+    <div class="wrap">
+      {(s.markets || []).length > 0 && <span class="lbl">الأسواق</span>}
+      {(s.markets || []).map((m) => <span>{m.label} <b>{m.value}</b></span>)}
+      {(s.matches || []).length > 0 && <span aria-hidden="true" style="color:var(--line2)">|</span>}
+      {(s.matches || []).length > 0 && <span class="lbl">المباريات</span>}
+      {(s.matches || []).map((m) => <span>{m.home} <b>{m.score}</b> {m.away}</span>)}
+    </div>
+  </div>
+) : null}

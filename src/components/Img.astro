@@ -1,0 +1,7 @@
+---
+// صورة من Sanity بقياس مناسب، أو خانة رمادية حين لا توجد صورة.
+const { src, alt = '', ratio = 'r32', w = 800, label = 'صورة', cls = '', style = '', eager = false } = Astro.props;
+---
+{src
+  ? <div class={`media ${ratio} ${cls}`} style={style}><img src={`${src}?w=${w}&auto=format&fit=crop`} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async"></div>
+  : <div class={`ph ${ratio} ${cls}`} style={style} aria-hidden="true">{label}</div>}

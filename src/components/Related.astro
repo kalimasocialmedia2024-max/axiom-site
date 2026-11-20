@@ -1,0 +1,10 @@
+---
+import Card from './Card.astro';
+const { title, items = [] } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="wrap" style="padding-top:48px;display:flex;flex-direction:column;gap:20px">
+    <div class="h-sec"><h2 style="font-size:24px">{title}</h2></div>
+    <div class="grid">{items.map((a) => <Card a={a} showTag={false} />)}</div>
+  </section>
+)}

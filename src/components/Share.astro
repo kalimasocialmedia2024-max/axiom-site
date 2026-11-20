@@ -1,0 +1,15 @@
+---
+import { SITE } from '../lib/config.js';
+const { title = '' } = Astro.props;
+const url = new URL(Astro.url.pathname, SITE.url).href;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+---
+<div class="share">
+  <span class="meta" style="margin-left:4px">شارك</span>
+  <a href={`https://x.com/intent/post?url=${u}&text=${t}`} target="_blank" rel="noopener">X</a>
+  <a href={`https://www.facebook.com/sharer/sharer.php?u=${u}`} target="_blank" rel="noopener">فيسبوك</a>
+  <a href={`https://wa.me/?text=${t}%20${u}`} target="_blank" rel="noopener">واتساب</a>
+  <a href={`https://t.me/share/url?url=${u}&text=${t}`} target="_blank" rel="noopener">تلغرام</a>
+  <button type="button" data-copy={url}>نسخ الرابط</button>
+</div>

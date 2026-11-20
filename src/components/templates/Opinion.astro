@@ -1,0 +1,56 @@
+---
+// قالب الرأي: الكاتب في الواجهة، وتنبيه بأنّ المقال يعبّر عن رأي كاتبه.
+import Share from '../Share.astro';
+import MostRead from '../MostRead.astro';
+import Related from '../Related.astro';
+import Tags from '../Tags.astro';
+import Ad from '../Ad.astro';
+import AuthorBox from '../AuthorBox.astro';
+import { getData, byWriter, byKind } from '../../lib/sanity.js';
+import { renderBody } from '../../lib/portableText.js';
+import { articleUrl, SITE } from '../../lib/config.js';
+import { fmtDate, readingTime } from '../../lib/format.js';
+
+const { a } = Astro.props;
+const data = await getData();
+const w = a.authors[0] || {};
+const ad = SITE.showAdSlots ? '<div class="ad" style="max-width:300px;height:250px">مساحة إعلانية داخل النصّ</div>' : '';
+const body = renderBody(a.body, { inlineAdAfter: 3, adHtml: ad });
+const others = w.slug ? byWriter(data.articles, w.slug).filter((x) => x.slug !== a.slug).slice(0, 3) : [];
+const more = byKind(data.articles, 'opinion').filter((x) => x.slug !== a.slug && !others.includes(x)).slice(0, 3);
+---
+<div class="wrap article-wrap">
+  <article class="article-main">
+    <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span><a href="/opinion/">رأي</a></nav>
+    {w.name && (
+      <div class="box opinion-head">
+        <div class="avatar" style="width:140px;height:140px;font-size:14px">{w.photo ? <img src={`${w.photo}?w=280&h=280&fit=crop`} alt="" /> : 'صورة الكاتب'}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1 1 280px">
+          <span class="badge">رأي</span>
+          <a href={`/writers/${w.slug}/`} class="kufi" style="font-weight:800;font-size:24px">{w.name}</a>
+          {w.role && <span style="font-size:15px;color:var(--muted)">{w.role}</span>}
+        </div>
+      </div>
+    )}
+    <h1 class="a-title">{a.title}</h1>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px" class="meta">
+      <span>{[fmtDate(a.publishedAt), readingTime(a)].filter(Boolean).join(' · ')}</span>
+      <span style="font-style:italic">المقال يعبّر عن رأي كاتبه ولا يعبّر بالضرورة عن رأي الشبكة</span>
+    </div>
+    <Share title={a.title} />
+    <Fragment set:html={body.html} />
+    {w.name && <AuthorBox w={w} dark />}
+    {others.length > 0 && (
+      <section style="display:flex;flex-direction:column">
+        <h2 class="kufi" style="margin:0 0 6px;font-weight:800;font-size:20px">مقالات أخرى للكاتب</h2>
+        {others.map((x) => <a href={articleUrl(x)} style="font-size:15px;font-weight:600;line-height:1.7;padding:10px 0;border-top:1px solid var(--line)">{x.title}</a>)}
+      </section>
+    )}
+    <Tags tags={a.tags} />
+  </article>
+  <aside class="article-side">
+    <MostRead />
+    <Ad w={300} h={600} />
+  </aside>
+</div>
+<Related title="من الرأي" items={more} />

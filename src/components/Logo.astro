@@ -1,0 +1,12 @@
+---
+// الشعار المعتمد في public/brand/logo.png، والشعار "إعلام بمستوى الحقيقة" جزء منه.
+// إن غاب الملفّ يظهر الاسم نصّاً بدلاً منه.
+import { BRAND } from '../lib/brand.js';
+import { SITE } from '../lib/config.js';
+const { small = false } = Astro.props;
+---
+<span class="logo">
+  {BRAND.logo
+    ? <img class="mark" src={BRAND.logo} alt={`${SITE.name}: ${SITE.slogan}`} style={small ? 'height:44px' : undefined}>
+    : <span class="fallback" dir="ltr">{SITE.name}</span>}
+</span>

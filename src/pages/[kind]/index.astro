@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import ListingPage from '../../components/ListingPage.astro';
+import { getData, byKind } from '../../lib/sanity.js';
+import { KINDS, SECTIONS, sectionUrl } from '../../lib/config.js';
+
+export function getStaticPaths() {
+  return Object.entries(KINDS).map(([kind, k]) => ({ params: { kind: k.path }, props: { kind } }));
+}
+
+const { kind } = Astro.props;
+const k = KINDS[kind];
+const data = await getData();
+const items = byKind(data.articles, kind).slice(0, 200);
+const pills = kind === 'news' ? [{ label: 'الكلّ', href: '/news/' }, ...SECTIONS.map((s) => ({ label: s.title, href: sectionUrl(s.slug) }))] : [];
+---
+<Base title={k.label} description={k.description} active={`/${k.path}/`}>
+  <ListingPage title={k.label} description={k.description} items={items} pills={pills} activePill="/news/" />
+</Base>

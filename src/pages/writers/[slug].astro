@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import Row from '../../components/Row.astro';
+import Ad from '../../components/Ad.astro';
+import { getData, byWriter } from '../../lib/sanity.js';
+import { KINDS } from '../../lib/config.js';
+
+export async function getStaticPaths() {
+  const data = await getData();
+  return data.writers.map((w) => ({ params: { slug: w.slug }, props: { w } }));
+}
+
+const { w } = Astro.props;
+const data = await getData();
+const items = byWriter(data.articles, w.slug);
+const kinds = [...new Set(items.map((a) => a.kind))];
+const others = data.writers.filter((x) => x.slug !== w.slug).slice(0, 6);
+---
+<Base title={w.name} description={w.bio} image={w.photo} active="/writers/">
+  <section class="dark-band deep">
+    <div class="wrap" style="padding-block:48px;display:flex;flex-wrap:wrap;gap:36px;align-items:center">
+      <div class="avatar" style="width:200px;height:200px;border:4px solid var(--accent);background:#26262B;color:#BDBDC4;font-size:14px">{w.photo ? <img src={`${w.photo}?w=400&h=400&fit=crop`} alt={w.name} /> : 'صورة الكاتب'}</div>
+      <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:12px">
+        <h1 class="kufi" style="margin:0;font-weight:800;font-size:38px">{w.name}</h1>
+        {w.role && <span class="sub" style="font-size:17px">{w.role}</span>}
+        {w.bio && <p style="margin:0;font-size:16px;line-height:1.9;color:#EDEDF0;max-width:720px">{w.bio}</p>}
+        {(w.specialties || []).length > 0 && <div style="display:flex;flex-wrap:wrap;gap:8px">{w.specialties.map((s) => <span style="background:#26262B;border-radius:3px;padding:4px 12px;font-size:13px">{s}</span>)}</div>}
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+          {w.x && <a href={w.x} target="_blank" rel="noopener" style="border:1px solid #4A4A52;border-radius:18px;padding:6px 14px;font-size:13px">X</a>}
+          {w.facebook && <a href={w.facebook} target="_blank" rel="noopener" style="border:1px solid #4A4A52;border-radius:18px;padding:6px 14px;font-size:13px">فيسبوك</a>}
+          {w.email && <a href={`mailto:${w.email}`} style="border:1px solid #4A4A52;border-radius:18px;padding:6px 14px;font-size:13px">البريد الإلكتروني</a>}
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="wrap article-wrap" style="padding-top:32px">
+    <main class="article-main" style="gap:0" id="writer-list">
+      {kinds.length > 1 && (
+        <div class="pills" role="group" aria-label="تصفية حسب النوع" style="padding-bottom:8px">
+          <button type="button" class="pill on" data-filter="">كلّ المقالات</button>
+          {kinds.map((k) => <button type="button" class="pill" data-filter={k}>{KINDS[k]?.badge}</button>)}
+        </div>
+      )}
+      {items.length === 0 && <p class="empty">لا موادّ منشورة لهذا الكاتب بعد.</p>}
+      {items.map((a, i) => <div data-kind={a.kind}><Row a={a} extra={i >= 10} /></div>)}
+      {items.length > 10 && <button type="button" class="btn more-btn" data-more="writer-list">تحميل المزيد</button>}
+    </main>
+    <aside class="article-side">
+      {others.length > 0 && (
+        <section class="most">
+          <h2>كتّاب آخرون</h2>
+          {others.map((o) => (
+            <a href={`/writers/${o.slug}/`} style="align-items:center">
+              <div class="avatar" style="width:48px;height:48px;font-size:10px">{o.photo ? <img src={`${o.photo}?w=96&h=96&fit=crop`} alt="" /> : 'صورة'}</div>
+              <span class="kufi" style="font-weight:700;font-size:15px">{o.name}</span>
+            </a>
+          ))}
+        </section>
+      )}
+      <Ad w={300} h={250} />
+    </aside>
+  </div>
+  <script is:inline>
+    document.querySelectorAll('[data-filter]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var k = b.getAttribute('data-filter');
+        document.querySelectorAll('[data-filter]').forEach(function (x) { x.classList.toggle('on', x === b); });
+        document.querySelectorAll('#writer-list [data-kind]').forEach(function (r) {
+          r.style.display = !k || r.getAttribute('data-kind') === k ? '' : 'none';
+          var row = r.querySelector('.row'); if (k && row) row.hidden = false;
+        });
+      });
+    });
+  </script>
+</Base>

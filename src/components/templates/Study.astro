@@ -1,5 +1,5 @@
 ---
-// قالب الدراسة: إصدار مركز كلمة، بملخّص تنفيذيّ وهوامش وطريقة استشهاد وملفّ PDF.
+// قالب الدراسة: إصدار AXIOM+، بملخّص تنفيذيّ وهوامش وطريقة استشهاد وملفّ PDF.
 import Logo from '../Logo.astro';
 import { getData, byKind } from '../../lib/sanity.js';
 import { renderBody } from '../../lib/portableText.js';
@@ -11,7 +11,7 @@ const data = await getData();
 const body = renderBody(a.body, { numberH2: true });
 const researchers = authorNames(a);
 const url = new URL(articleUrl(a), SITE.url).href;
-const citation = a.citation || `${researchers ? researchers + '، ' : ''}"${a.title}"، مركز كلمة للدراسات والبحوث الجيوسياسية، ${fmtDate(a.publishedAt)}، ${url}.`;
+const citation = a.citation || `${researchers ? researchers + '، ' : ''}"${a.title}"، AXIOM+، ${fmtDate(a.publishedAt)}، ${url}.`;
 const sizeMb = a.pdfSize ? `${(a.pdfSize / 1048576).toFixed(1)} م.ب` : '';
 const more = byKind(data.articles, 'study').filter((x) => x.slug !== a.slug).slice(0, 3);
 ---
@@ -19,7 +19,7 @@ const more = byKind(data.articles, 'study').filter((x) => x.slug !== a.slug).sli
   <div class="wrap" style="flex-direction:row;flex-wrap:wrap;gap:48px;align-items:center;padding-block:36px 40px">
     <div style="flex:3 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px">
       <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span><a href="/studies/">الدراسات</a></nav>
-      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span class="badge">دراسة</span><span class="meta">مركز كلمة للدراسات والبحوث الجيوسياسية</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span class="badge">دراسة</span><span class="meta">AXIOM+</span></div>
       <h1 style="line-height:1.5">{a.title}</h1>
       {a.subtitle && <p class="a-sub" style="font-size:20px">{a.subtitle}</p>}
       <div class="a-meta">

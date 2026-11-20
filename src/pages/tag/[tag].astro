@@ -1,0 +1,20 @@
+---
+// صفحة الوسم: كلّ الموادّ التي تحمل الوسم نفسه.
+import Base from '../../layouts/Base.astro';
+import ListingPage from '../../components/ListingPage.astro';
+import { getData, tagCounts, tagUrl } from '../../lib/sanity.js';
+
+export async function getStaticPaths() {
+  const data = await getData();
+  return tagCounts(data.articles).map(({ tag }) => ({ params: { tag }, props: { tag } }));
+}
+
+const { tag } = Astro.props;
+const data = await getData();
+const items = data.articles.filter((a) => (a.tags || []).includes(tag));
+const pills = tagCounts(data.articles).filter((t) => t.tag !== tag).slice(0, 12).map((t) => ({ label: t.tag, href: tagUrl(t.tag) }));
+const description = `كلّ ما نشرته AXIOM+ عن ${tag}: أخبار وتحليلات ومتابعات.`;
+---
+<Base title={tag} description={description}>
+  <ListingPage title={tag} crumb={`وسم: ${tag}`} description={description} items={items} pills={pills} />
+</Base>

@@ -4,7 +4,7 @@ import Img from '../components/Img.astro';
 import Card from '../components/Card.astro';
 import MostRead from '../components/MostRead.astro';
 import Ad from '../components/Ad.astro';
-import { getData, byKind, bySection } from '../lib/sanity.js';
+import { getData, byKind, bySection, tagCounts, tagUrl, imageFirst } from '../lib/sanity.js';
 import { articleUrl, KINDS, SECTIONS, sectionTitle, sectionUrl } from '../lib/config.js';
 import { readingTime, authorNames } from '../lib/format.js';
 
@@ -20,12 +20,15 @@ const pick = (list, n) => {
 };
 const side = pick(A.filter((a) => a.kind !== 'study'), 4);
 const three = pick(analyses, 3);
+// إلى أن تُنشر تحليلات، يحلّ محلّها أحدث الأخبار.
+const latestNews = three.length ? [] : pick(imageFirst(byKind(A, 'news')), 6);
+const topics = tagCounts(A).slice(0, 14);
 const opinions = pick(byKind(A, 'opinion'), 4);
 const invLead = pick(byKind(A, 'investigation'), 1)[0];
 const specials = pick([...byKind(A, 'special'), ...byKind(A, 'investigation')], 3);
 const latestAudio = data.episodes.find((e) => e.mediaType === 'audio');
 const episodes = data.episodes.filter((e) => e.mediaType !== 'audio').slice(0, 3);
-const regions = SECTIONS.map((s) => ({ ...s, items: bySection(byKind(A, 'news'), s.slug).slice(0, 4) })).filter((r) => r.items.length);
+const regions = SECTIONS.map((s) => ({ ...s, items: imageFirst(bySection(byKind(A, 'news'), s.slug)).slice(0, 4) })).filter((r) => r.items.length);
 const tagOf = (a) => (a.kind === 'news' ? sectionTitle(a.section) || 'أخبار' : KINDS[a.kind]?.badge);
 const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>';
 ---
@@ -35,8 +38,8 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
 
     {lead && (
       <section class="hero" aria-label="الواجهة">
-        <article class="hero-main">
-          <a href={articleUrl(lead)} tabindex="-1" aria-hidden="true"><Img src={lead.image?.url} alt="" ratio="r169" w={1280} label="صورة التحليل الرئيسي" eager /></a>
+        <article class={`hero-main${lead.image?.url ? '' : ' no-img'}`}>
+          {lead.image?.url && <a href={articleUrl(lead)} tabindex="-1" aria-hidden="true"><Img src={lead.image.url} alt="" ratio="r169" w={1280} label={tagOf(lead)} eager /></a>}
           <span class="tag" style="font-size:14px">{tagOf(lead)}</span>
           <h1><a href={articleUrl(lead)}>{lead.title}</a></h1>
           {lead.excerpt && <p>{lead.excerpt}</p>}
@@ -44,8 +47,8 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
         </article>
         <div class="hero-side">
           {side.map((a) => (
-            <article class="side-item">
-              <a href={articleUrl(a)} tabindex="-1" aria-hidden="true"><Img src={a.image?.url} alt="" ratio="" w={240} cls="" style="width:120px;height:84px;flex-shrink:0" /></a>
+            <article class={`side-item${a.image?.url ? '' : ' text-only'}`}>
+              {a.image?.url && <a href={articleUrl(a)} tabindex="-1" aria-hidden="true"><Img src={a.image.url} alt="" ratio="" w={240} cls="" style="width:120px;height:84px;flex-shrink:0" label={tagOf(a)} /></a>}
               <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
                 <span class="tag" style="font-size:12px">{tagOf(a)}</span>
                 <h3><a href={articleUrl(a)}>{a.title}</a></h3>
@@ -56,12 +59,30 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
       </section>
     )}
 
+    {topics.length > 0 && (
+      <nav class="topics" aria-label="مواضيع">
+        <span class="lbl">مواضيع</span>
+        {topics.map((t) => <a class="chip" href={tagUrl(t.tag)}>{t.tag}</a>)}
+      </nav>
+    )}
+
     <div class="cols">
       <section class="col-main">
-        <div class="h-sec"><h2>الوحدة التحليلية</h2><a href="/analysis/">عرض الكلّ</a></div>
-        <div class="grid" style="--min:240px">
-          {three.map((a) => <Card a={a} excerpt showTag={false} showAuthor />)}
-        </div>
+        {three.length > 0 ? (
+          <>
+            <div class="h-sec"><h2>الوحدة التحليلية</h2><a href="/analysis/">عرض الكلّ</a></div>
+            <div class="grid" style="--min:240px">
+              {three.map((a) => <Card a={a} excerpt showTag={false} showAuthor />)}
+            </div>
+          </>
+        ) : latestNews.length > 0 && (
+          <>
+            <div class="h-sec"><h2>آخر الأخبار</h2><a href="/news/">كلّ الأخبار</a></div>
+            <div class="grid" style="--min:240px">
+              {latestNews.map((a) => <Card a={a} showDate />)}
+            </div>
+          </>
+        )}
       </section>
       <aside class="col-side">
         <MostRead />
@@ -166,7 +187,7 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
         {regions.map((r) => (
           <section style="display:flex;flex-direction:column;gap:14px">
             <div class="h-sec" style="padding-bottom:8px"><h2 style="font-size:22px">{r.title}</h2><a href={sectionUrl(r.slug)} style="font-size:13px">المزيد</a></div>
-            <a href={articleUrl(r.items[0])} tabindex="-1" aria-hidden="true"><Img src={r.items[0].image?.url} alt="" ratio="r169" w={640} /></a>
+            <a href={articleUrl(r.items[0])} tabindex="-1" aria-hidden="true"><Img src={r.items[0].image?.url} alt="" ratio="r169" w={640} label={r.title} /></a>
             <h3 class="kufi" style="margin:0;font-weight:700;font-size:18px;line-height:1.6"><a href={articleUrl(r.items[0])}>{r.items[0].title}</a></h3>
             {r.items.slice(1).map((a) => (
               <a href={articleUrl(a)} style="font-size:15px;line-height:1.7;padding:8px 0;border-top:1px solid var(--line)">{a.title}</a>

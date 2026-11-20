@@ -1,17 +1,20 @@
 ---
+// الشريط: الأخبار المعلَّمة "عاجل" خلال 36 ساعة، وإلّا آخر العناوين المنشورة.
 import { getData } from '../lib/sanity.js';
 import { articleUrl } from '../lib/config.js';
 const data = await getData();
 const dayAgo = Date.now() - 36 * 3600 * 1000;
-const items = data.articles.filter((a) => a.breaking && (data.sample || Date.parse(a.publishedAt) > dayAgo)).slice(0, 6);
+const urgent = data.articles.filter((a) => a.breaking && (data.sample || Date.parse(a.publishedAt) > dayAgo)).slice(0, 6);
 const manual = data.settings.breakingText;
+const isUrgent = urgent.length > 0 || Boolean(manual);
+const items = isUrgent ? urgent : data.articles.filter((a) => a.kind === 'news').slice(0, 10);
 const s = data.settings;
 const showMarkets = (s.markets || []).length || (s.matches || []).length;
 ---
 {(items.length > 0 || manual) && (
-  <div class="strip breaking" role="region" aria-label="عاجل">
+  <div class={`strip breaking${isUrgent ? '' : ' latest'}`} role="region" aria-label={isUrgent ? 'عاجل' : 'آخر الأخبار'}>
     <div class="wrap">
-      <span class="badge">عاجل</span>
+      <span class="badge">{isUrgent ? 'عاجل' : 'آخر الأخبار'}</span>
       <div class="ticker">
         <div class="ticker-track">
           {[0, 1].map((k) => (

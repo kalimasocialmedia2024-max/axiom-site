@@ -6,7 +6,7 @@ import Opinion from '../../components/templates/Opinion.astro';
 import Investigation from '../../components/templates/Investigation.astro';
 import Study from '../../components/templates/Study.astro';
 import { getData } from '../../lib/sanity.js';
-import { KINDS } from '../../lib/config.js';
+import { KINDS, SITE, articleUrl, sectionTitle } from '../../lib/config.js';
 
 export async function getStaticPaths() {
   const data = await getData();
@@ -16,8 +16,31 @@ export async function getStaticPaths() {
 }
 
 const { article: a } = Astro.props;
+const url = new URL(articleUrl(a), SITE.url).href;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': a.kind === 'news' ? 'NewsArticle' : a.kind === 'opinion' ? 'OpinionNewsArticle' : a.kind === 'analysis' ? 'AnalysisNewsArticle' : 'Article',
+  headline: a.title.slice(0, 110),
+  description: a.excerpt || a.subtitle || undefined,
+  image: a.image?.url ? [a.image.url] : [new URL('/brand/og-default.png', SITE.url).href],
+  datePublished: a.publishedAt,
+  dateModified: a.updatedAt || a.publishedAt,
+  inLanguage: 'ar',
+  mainEntityOfPage: url,
+  articleSection: a.kind === 'news' ? sectionTitle(a.section) || undefined : KINDS[a.kind]?.label,
+  keywords: (a.tags || []).join(', ') || undefined,
+  author: (a.authors || []).length ? a.authors.map((w) => ({ '@type': 'Person', name: w.name, url: new URL(`/writers/${w.slug}/`, SITE.url).href })) : [{ '@type': 'Organization', name: SITE.name, url: SITE.url }],
+  publisher: { '@type': 'NewsMediaOrganization', name: SITE.name, logo: { '@type': 'ImageObject', url: new URL('/brand/logo-square.png', SITE.url).href } },
+};
 const T = { news: News, analysis: Analysis, opinion: Opinion, investigation: Investigation, special: Investigation, study: Study }[a.kind] || News;
 ---
 <Base title={a.title} description={a.excerpt || a.subtitle} image={a.image?.url} type="article" active={`/${KINDS[a.kind].path}/`}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <meta property="article:published_time" content={a.publishedAt}>
+    <meta property="article:modified_time" content={a.updatedAt || a.publishedAt}>
+    {a.section && <meta property="article:section" content={sectionTitle(a.section)}>}
+    {(a.tags || []).map((t) => <meta property="article:tag" content={t}>)}
+  </Fragment>
   <T a={a} />
 </Base>

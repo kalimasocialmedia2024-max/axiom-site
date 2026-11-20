@@ -7,7 +7,7 @@ const { a, extra = false } = Astro.props;
 const tag = a.kind === 'news' ? sectionTitle(a.section) || KINDS.news.badge : KINDS[a.kind]?.badge;
 ---
 <article class="row" data-extra={extra ? '' : undefined} hidden={extra}>
-  <a href={articleUrl(a)} tabindex="-1" aria-hidden="true" style="flex:0 1 260px"><Img src={a.image?.url} alt="" ratio="r32" w={520} /></a>
+  <a href={articleUrl(a)} tabindex="-1" aria-hidden="true" style="flex:0 1 260px"><Img src={a.image?.url} alt="" ratio="r32" w={520} label={tag} /></a>
   <div class="txt">
     <div style="display:flex;gap:10px;align-items:center">
       {tag && <span class="tag">{tag}</span>}

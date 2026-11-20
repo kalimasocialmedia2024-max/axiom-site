@@ -7,7 +7,7 @@ const { a, excerpt = false, showTag = true, showAuthor = false, showDate = false
 const tag = a.kind === 'news' ? sectionTitle(a.section) || KINDS.news.badge : KINDS[a.kind]?.badge;
 ---
 <article class="card">
-  <a href={articleUrl(a)} tabindex="-1" aria-hidden="true"><Img src={a.image?.url} alt={a.image?.alt || ''} ratio={ratio} /></a>
+  <a href={articleUrl(a)} tabindex="-1" aria-hidden="true"><Img src={a.image?.url} alt={a.image?.alt || ''} ratio={ratio} label={tag} /></a>
   {showTag && tag && <span class="tag" style="font-size:12px">{tag}</span>}
   <h3><a href={articleUrl(a)}>{a.title}</a></h3>
   {excerpt && a.excerpt && <p>{a.excerpt}</p>}

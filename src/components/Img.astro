@@ -1,7 +1,8 @@
 ---
-// صورة من Sanity بقياس مناسب، أو خانة رمادية حين لا توجد صورة.
-const { src, alt = '', ratio = 'r32', w = 800, label = 'صورة', cls = '', style = '', eager = false } = Astro.props;
+// صورة المادّة بقياس مناسب. حين لا توجد صورة (أو يتعذّر تحميلها من المصدر) تظهر بطاقة الهويّة مع اسم القسم.
+const { src, alt = '', ratio = 'r32', w = 800, label = '', cls = '', style = '', eager = false } = Astro.props;
+const text = label && label !== 'صورة' ? label : 'AXIOM+';
 ---
 {src
-  ? <div class={`media ${ratio} ${cls}`} style={style}><img src={src.includes('cdn.sanity.io') ? `${src}?w=${w}&auto=format&fit=crop` : src} referrerpolicy="no-referrer" alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async"></div>
-  : <div class={`ph brand-ph ${ratio} ${cls}`} style={style} aria-hidden="true"><img src="/brand/icon-red.png" alt="" width="44" height="44"><span dir="ltr">AXIOM+</span></div>}
+  ? <div class={`media ${ratio} ${cls}`} style={style} data-label={text}><img src={src.includes('cdn.sanity.io') ? `${src}?w=${w}&auto=format&fit=crop` : src} referrerpolicy="no-referrer" alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" onerror="this.parentNode.classList.add('img-fail');this.remove()"></div>
+  : <div class={`ph brand-ph ${ratio} ${cls}`} style={style} aria-hidden="true"><img src="/brand/icon-red.png" alt="" width="40" height="40"><span>{text}</span></div>}

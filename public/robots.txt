@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /search
+Disallow: /api/
+
+Sitemap: https://axiomplusmedia.com/sitemap.xml
+Sitemap: https://axiomplusmedia.com/news-sitemap.xml

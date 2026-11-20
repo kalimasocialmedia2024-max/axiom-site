@@ -95,3 +95,16 @@ export function related(data, article, n = 3) {
     .slice(0, n)
     .map((x) => x.a);
 }
+
+// الوسوم: عدد الموادّ لكلّ وسم، مرتّبة من الأكثر تداولاً.
+export function tagCounts(list) {
+  const m = new Map();
+  for (const a of list) for (const t of a.tags || []) m.set(t, (m.get(t) || 0) + 1);
+  return [...m.entries()].sort((x, y) => y[1] - x[1]).map(([tag, count]) => ({ tag, count }));
+}
+export const tagUrl = (t) => `/tag/${encodeURIComponent(t)}/`;
+// يقدّم المادّة المصوّرة إلى رأس القائمة من دون تغيير ترتيب الباقي.
+export function imageFirst(list) {
+  const i = list.findIndex((a) => a.image?.url);
+  return i > 0 ? [list[i], ...list.slice(0, i), ...list.slice(i + 1)] : list;
+}

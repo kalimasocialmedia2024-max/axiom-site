@@ -1,0 +1,19 @@
+---
+// فهرس الوسوم.
+import Base from '../../layouts/Base.astro';
+import { getData, tagCounts, tagUrl } from '../../lib/sanity.js';
+const data = await getData();
+const tags = tagCounts(data.articles);
+---
+<Base title="المواضيع" description="فهرس المواضيع والوسوم في AXIOM+">
+  <section class="page-head"><div class="wrap">
+    <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span><span>المواضيع</span></nav>
+    <h1>المواضيع</h1>
+  </div></section>
+  <main class="wrap" style="padding-block:32px 64px">
+    {tags.length === 0 && <p class="empty">لا وسوم بعد.</p>}
+    <div class="chips" style="border:0;padding:0;gap:10px">
+      {tags.map((t) => <a class="chip" href={tagUrl(t.tag)} style="font-size:15px;padding:6px 14px">{t.tag} <span class="meta">({t.count})</span></a>)}
+    </div>
+  </main>
+</Base>

@@ -61,6 +61,7 @@ export const SUB_NAV = [
   { label: 'رأي', href: '/opinion/' },
   { label: 'تحقيقات', href: '/investigations/' },
   { label: 'خاصّ', href: '/special/' },
+  { label: 'المواضيع', href: '/tag/' },
 ];
 
 // روابط الحسابات: تُستبدل بالروابط الفعلية عند فتح الحسابات.
@@ -80,4 +81,5 @@ export const FOOTER_LINKS = [
   { label: 'أعلن معنا', href: '/page/advertise/' },
   { label: 'انضمّ إلينا', href: '/page/join/' },
   { label: 'اتصل بنا', href: '/page/contact/' },
+  { label: 'RSS', href: '/rss.xml' },
 ];

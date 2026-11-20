@@ -16,7 +16,7 @@ const showMarkets = (s.markets || []).length || (s.matches || []).length;
     <div class="wrap">
       <span class="badge">{isUrgent ? 'عاجل' : 'آخر الأخبار'}</span>
       <div class="ticker">
-        <div class="ticker-track">
+        <div class="ticker-track" style={`--tick-dur:${Math.max(70, (items.length + (manual ? 1 : 0)) * 10)}s`}>
           {[0, 1].map((k) => (
             <span class="tick-group" aria-hidden={k === 1 ? 'true' : undefined}>
               {[...(manual ? [{ manual }] : []), ...items].map((a) => (

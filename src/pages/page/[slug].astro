@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   const data = await getData();
   const fromCms = data.pages.map((p) => ({ params: { slug: p.slug }, props: { page: p } }));
   const have = new Set(data.pages.map((p) => p.slug));
-  const placeholders = [...FOOTER_LINKS.map((l) => ({ slug: l.href.split('/')[2], title: l.label })), { slug: 'privacy', title: 'سياسة الخصوصية' }, { slug: 'terms', title: 'شروط الاستخدام' }]
+  const placeholders = [...FOOTER_LINKS.filter((l) => l.href.startsWith('/page/')).map((l) => ({ slug: l.href.split('/')[2], title: l.label })), { slug: 'privacy', title: 'سياسة الخصوصية' }, { slug: 'terms', title: 'شروط الاستخدام' }]
     .filter((p) => !have.has(p.slug))
     .map((p) => ({ params: { slug: p.slug }, props: { page: { ...p, body: [] } } }));
   return [...fromCms, ...placeholders];

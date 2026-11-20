@@ -27,7 +27,7 @@ export const KINDS = {
   opinion: { label: 'رأي', badge: 'رأي', path: 'opinion', description: 'مقالات الرأي لكتّاب AXIOM+' },
   investigation: { label: 'تحقيقات', badge: 'تحقيق', path: 'investigations', description: 'تحقيقات استقصائية موثّقة' },
   special: { label: 'خاصّ', badge: 'خاصّ', path: 'special', description: 'موادّ خاصّة بـAXIOM+' },
-  study: { label: 'الدراسات', badge: 'دراسة', path: 'studies', description: 'إصدارات مركز كلمة للدراسات والبحوث الجيوسياسية' },
+  study: { label: 'الدراسات', badge: 'دراسة', path: 'studies', description: 'دراسات وأوراق بحثية معمّقة' },
 };
 
 export const kindByPath = (p) => Object.entries(KINDS).find(([, v]) => v.path === p)?.[0];

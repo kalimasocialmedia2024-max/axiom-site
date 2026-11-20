@@ -274,6 +274,8 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
 .chip:hover { background: var(--accent); color: #fff; }
 
 /* العناوين الرئيسة بالأحمر، وشريط أبطأ تُحسب مدّته من عدد العناوين */
-.hero-main h1, .hero-main h1 a, .side-item h3, .side-item h3 a, .a-title { color: var(--accent); }
+.hero-main h1, .hero-main h1 a, .a-title { color: var(--accent); }
+.side-item .tag, .card .tag, .row .tag { color: var(--accent); }
+.side-item h3, .side-item h3 a { color: var(--ink); }
 .hero-main h1 a:hover, .side-item h3 a:hover { color: var(--accent-hover); }
 .ticker-track { animation-duration: var(--tick-dur, 100s); }

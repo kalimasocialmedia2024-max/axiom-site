@@ -2,13 +2,10 @@
 import Base from '../../layouts/Base.astro';
 import ListingPage from '../../components/ListingPage.astro';
 import { getData, byKind } from '../../lib/sanity.js';
-import { KINDS, SECTIONS, sectionUrl } from '../../lib/config.js';
+import { KINDS, SECTIONS, sectionUrl, kindByPath } from '../../lib/config.js';
 
-export function getStaticPaths() {
-  return Object.entries(KINDS).map(([kind, k]) => ({ params: { kind: k.path }, props: { kind } }));
-}
-
-const { kind } = Astro.props;
+const kind = kindByPath(Astro.params.kind);
+if (!kind) return Astro.rewrite('/404');
 const k = KINDS[kind];
 const data = await getData();
 const items = byKind(data.articles, kind).slice(0, 200);

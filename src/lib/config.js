@@ -66,7 +66,7 @@ export const SUB_NAV = [
 
 // روابط الحسابات: تُستبدل بالروابط الفعلية عند فتح الحسابات.
 export const SOCIAL = [
-  { label: 'X', icon: 'fa-x-twitter', href: '#' },
+  { label: 'X', icon: 'fa-x-twitter', href: 'https://x.com/AXIOMPLUS2020' },
   { label: 'يوتيوب', icon: 'fa-youtube', href: '#' },
   { label: 'فيسبوك', icon: 'fa-facebook-f', href: '#' },
   { label: 'إنستغرام', icon: 'fa-instagram', href: '#' },

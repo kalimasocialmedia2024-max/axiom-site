@@ -66,12 +66,12 @@ export const SUB_NAV = [
 
 // روابط الحسابات: تُستبدل بالروابط الفعلية عند فتح الحسابات.
 export const SOCIAL = [
-  { label: 'X', aria: 'AXIOM+ على X', href: '#' },
-  { label: 'يوتيوب', href: '#' },
-  { label: 'فيسبوك', href: '#' },
-  { label: 'إنستغرام', href: '#' },
-  { label: 'تيك توك', href: '#' },
-  { label: 'لينكدإن', href: '#' },
+  { label: 'X', icon: 'fa-x-twitter', href: '#' },
+  { label: 'يوتيوب', icon: 'fa-youtube', href: '#' },
+  { label: 'فيسبوك', icon: 'fa-facebook-f', href: '#' },
+  { label: 'إنستغرام', icon: 'fa-instagram', href: '#' },
+  { label: 'تيليغرام', icon: 'fa-telegram', href: '#' },
+  { label: 'لينكدإن', icon: 'fa-linkedin-in', href: '#' },
 ];
 
 export const FOOTER_LINKS = [

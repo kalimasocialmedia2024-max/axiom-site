@@ -19,11 +19,11 @@ export async function GET({ locals }) {
   for (const a of list) if (!(await kv.get('indexed:' + a._id))) fresh.push(a);
   if (!fresh.length) return json({ idle: true });
   const urlList = [SITE.url + '/', SITE.url + '/news/', ...fresh.slice(0, 100).map((a) => SITE.url + articleUrl(a))];
-  const res = await fetch('https://api.indexnow.org/indexnow', {
+  const res = await fetch('https://www.bing.com/indexnow', {
     method: 'POST',
     headers: { 'content-type': 'application/json; charset=utf-8' },
     body: JSON.stringify({ host: new URL(SITE.url).host, key: KEY, keyLocation: SITE.url + '/' + KEY + '.txt', urlList }),
   });
   if (res.status < 300) for (const a of fresh.slice(0, 100)) await kv.put('indexed:' + a._id, '1', { expirationTtl: 3 * 86400 });
-  return json({ status: res.status, sent: urlList.length });
+  return json({ status: res.status, sent: urlList.length, note: res.status < 300 ? '' : (await res.text()).slice(0, 200) });
 }

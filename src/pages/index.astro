@@ -59,6 +59,20 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
       </section>
     )}
 
+    {latestAudio && (
+      <div class="audio-bar top-audio" style="color:#fff;margin-top:24px">
+        {latestAudio.audio
+          ? <button type="button" class="play" aria-label="تشغيل النشرة الصوتية" data-audio="top-audio" set:html={play}></button>
+          : <a class="play" href={`/media/${latestAudio.slug}/`} aria-label="الاستماع إلى النشرة الصوتية" set:html={play}></a>}
+        <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:0">
+          <span class="kufi" style="font-weight:700;font-size:13px;color:var(--accent-soft)">النشرة الصوتية</span>
+          <span class="kufi" style="font-weight:700;font-size:17px">{latestAudio.title}</span>
+        </div>
+        {latestAudio.audio && <audio id="top-audio" src={latestAudio.audio} preload="none" controls style="flex:2 1 280px;height:36px"></audio>}
+        <a href="/media/?type=audio" style="font-size:14px;font-weight:600;color:#fff">النشرات السابقة</a>
+      </div>
+    )}
+
     {topics.length > 0 && (
       <nav class="topics" aria-label="مواضيع">
         <span class="lbl">مواضيع</span>
@@ -142,10 +156,10 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
     </section>
   )}
 
-  {(latestAudio || episodes.length > 0) && (
+  {episodes.length > 0 && (
     <section class="dark-band deep">
       <div class="wrap band-in" style="padding-block:48px;gap:28px">
-        {latestAudio && (
+        {false && latestAudio && (
           <div class="audio-bar">
             {latestAudio.audio
               ? <button type="button" class="play" aria-label="تشغيل النشرة الصوتية" data-audio="home-audio" set:html={play}></button>
@@ -190,7 +204,7 @@ const play = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" ari
             <a href={articleUrl(r.items[0])} tabindex="-1" aria-hidden="true"><Img src={r.items[0].image?.url} alt="" ratio="r169" w={640} label={r.title} /></a>
             <h3 class="kufi" style="margin:0;font-weight:700;font-size:18px;line-height:1.6"><a href={articleUrl(r.items[0])}>{r.items[0].title}</a></h3>
             {r.items.slice(1).map((a) => (
-              <a href={articleUrl(a)} style="font-size:15px;line-height:1.7;padding:8px 0;border-top:1px solid var(--line)">{a.title}</a>
+              <a href={articleUrl(a)} style="display:flex;gap:12px;align-items:center;font-size:15px;line-height:1.7;padding:10px 0;border-top:1px solid var(--line)"><Img src={a.image?.url} alt="" ratio="" w={200} cls="" style="width:96px;height:64px;flex-shrink:0" label={r.title} /><span>{a.title}</span></a>
             ))}
           </section>
         ))}

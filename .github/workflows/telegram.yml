@@ -27,3 +27,11 @@ jobs:
           SANITY_DATASET: production
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN || secrets.META_PAGE_TMETA_PAGE_TOKENOKEN }}
+      - name: تنبيهات المتصفّح
+        if: always()
+        run: |
+          for i in $(seq 1 60); do
+            r=$(curl -s https://axiomplusmedia.com/api/push-run)
+            echo "$r"
+            echo "$r" | grep -q '"more":true' || break
+          done

@@ -26,4 +26,4 @@ jobs:
           SANITY_PROJECT_ID: 9rw3viyf
           SANITY_DATASET: production
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
-          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN || secrets.META_PAGE_TMETA_PAGE_TOKENOKEN }}

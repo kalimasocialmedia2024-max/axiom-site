@@ -33,7 +33,7 @@ const body = renderBody(a.body, { inlineAdAfter: 3, adHtml: ad });
     <Share title={a.title} />
     {a.image?.url && (
       <figure class="fig">
-        <Img src={a.image.url} alt={a.image.alt || ''} ratio="r169" w={1280} eager />
+        <Img src={a.image.url} alt={a.image.alt || a.title} ratio="r169" w={1280} eager />
         {(a.image.caption || a.image.credit) && <figcaption>{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
       </figure>
     )}

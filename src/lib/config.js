@@ -68,7 +68,7 @@ export const SUB_NAV = [
 export const SOCIAL = [
   { label: 'X', icon: 'fa-x-twitter', href: 'https://x.com/AXIOMPLUS2020' },
   { label: 'يوتيوب', icon: 'fa-youtube', href: '#' },
-  { label: 'فيسبوك', icon: 'fa-facebook-f', href: '#' },
+  { label: 'فيسبوك', icon: 'fa-facebook-f', href: 'https://www.facebook.com/share/1JELvEyJzv/' },
   { label: 'إنستغرام', icon: 'fa-instagram', href: '#' },
   { label: 'تيليغرام', icon: 'fa-telegram', href: '#' },
   { label: 'لينكدإن', icon: 'fa-linkedin-in', href: '#' },

@@ -4,10 +4,10 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Breaking from '../components/Breaking.astro';
 import InstallApp from '../components/InstallApp.astro';
-import { SITE } from '../lib/config.js';
+import { SITE, SOCIAL } from '../lib/config.js';
 import { getData } from '../lib/sanity.js';
 
-const { title, description = SITE.description, image, type = 'website', active = '', showBreaking = true } = Astro.props;
+const { title, description = SITE.description, image, type = 'website', active = '', showBreaking = true, noindex = false } = Astro.props;
 const data = await getData();
 const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name}: ${SITE.slogan}`;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
@@ -35,16 +35,28 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
   <meta property="og:url" content={canonical}>
   <meta property="og:image" content={image ? (image.includes('cdn.sanity.io') ? `${image}?w=1200&h=630&fit=crop&auto=format` : image) : new URL('/brand/og-default.png', SITE.url).href}>
   <meta property="og:locale" content="ar_AR">
-  <script type="application/ld+json" set:html={JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'NewsMediaOrganization',
-    name: SITE.name,
-    alternateName: 'أكسيوم بلس',
-    url: SITE.url,
-    logo: { '@type': 'ImageObject', url: new URL('/brand/logo-square.png', SITE.url).href, width: 512, height: 512 },
-  })} />
+  <script type="application/ld+json" set:html={JSON.stringify([
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE.name,
+      alternateName: ['أكسيوم بلس', 'AXIOM PLUS MEDIA', 'Axiom Plus', 'AXIOM+ Media'],
+      url: SITE.url + '/',
+      inLanguage: 'ar',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'NewsMediaOrganization',
+      name: SITE.name,
+      alternateName: ['أكسيوم بلس', 'AXIOM PLUS MEDIA', 'Axiom Plus'],
+      slogan: SITE.slogan,
+      url: SITE.url + '/',
+      logo: { '@type': 'ImageObject', url: new URL('/brand/logo-square.png', SITE.url).href, width: 512, height: 512 },
+      sameAs: ['https://www.facebook.com/1385982597939400', ...SOCIAL.filter((s) => !/facebook|linkedin\.com\/in\//.test(s.href)).map((s) => s.href)],
+    },
+  ])} />
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'}>
   <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml">
   <slot name="head" />
   <meta name="theme-color" content="#0E0E10">

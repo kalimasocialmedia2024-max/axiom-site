@@ -1,5 +1,6 @@
 ---
 import { BRAND } from '../lib/brand.js';
+import Logo from './Logo.astro';
 import { MAIN_NAV, SUB_NAV, SOCIAL, FOOTER_LINKS, SITE } from '../lib/config.js';
 const year = new Date().getFullYear();
 ---
@@ -8,7 +9,7 @@ const year = new Date().getFullYear();
     <div class="r">
       <div style="display:flex;flex-direction:column;gap:6px">
         {BRAND.logo
-          ? <img src={BRAND.logo} alt={`${SITE.name}: ${SITE.slogan}`} style="height:56px;width:auto">
+          ? <Logo />
           : <span class="kufi" style="font-weight:800;font-size:26px;color:#fff" dir="ltr">{SITE.name}</span>}
       </div>
       <nav aria-label="روابط التذييل">

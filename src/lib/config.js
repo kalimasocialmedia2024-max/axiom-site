@@ -67,7 +67,7 @@ export const SUB_NAV = [
 // روابط الحسابات: تُستبدل بالروابط الفعلية عند فتح الحسابات.
 export const SOCIAL = [
   { label: 'X', icon: 'fa-x-twitter', href: 'https://x.com/AXIOMPLUS2020' },
-  { label: 'يوتيوب', icon: 'fa-youtube', href: '#' },
+  { label: 'يوتيوب', icon: 'fa-youtube', href: 'https://www.youtube.com/@axiomplusmedia' },
   { label: 'فيسبوك', icon: 'fa-facebook-f', href: 'https://www.facebook.com/share/1JELvEyJzv/' },
   { label: 'إنستغرام', icon: 'fa-instagram', href: 'https://www.instagram.com/plusaxiom/' },
   { label: 'تيليغرام', icon: 'fa-telegram', href: 'https://t.me/Axiomplus' },

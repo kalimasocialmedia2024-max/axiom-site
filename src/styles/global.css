@@ -308,3 +308,12 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
   .masthead .logo img.mark { height: 60px; }
   .mainnav, .mainnav ul { column-gap: 18px; }
 }
+
+/* الشعار على الهاتف: أصغر وفي المنتصف، والأزرار على الطرف */
+@media (max-width: 700px) {
+  .masthead .wrap { position: relative; justify-content: center; }
+  .masthead .wrap > a[href="/"] { flex: 1 1 100%; display: flex; justify-content: center; }
+  .masthead .logo { padding: 8px 0 4px; }
+  .masthead .logo img.mark { height: 44px; }
+  .masthead .tools { position: absolute; left: 12px; top: 15px; }
+}

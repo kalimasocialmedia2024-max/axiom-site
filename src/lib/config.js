@@ -18,6 +18,7 @@ export const SECTIONS = [
   { slug: 'health', title: 'صحة', description: 'الصحّة العامّة والطبّ والعلوم' },
   { slug: 'sports', title: 'رياضة', description: 'الرياضة المحلية والعربية والعالمية' },
   { slug: 'variety', title: 'منوعات', description: 'الثقافة والفنّ والمجتمع' },
+  { slug: 'world-press', title: 'الصحافة العالمية', description: 'مقالات وتحليلات مختارة من الصحف والمواقع العالمية، ملخّصة ومترجمة إلى العربية' },
 ];
 
 // أنواع المواد: لكلّ نوع قالبه ورابطه.
@@ -45,6 +46,7 @@ export const MAIN_NAV = [
   { label: 'أخبار', href: '/news/' },
   { label: 'محلي', href: '/section/local/' },
   { label: 'إقليمي ودولي', href: '/section/regional/' },
+  { label: 'الصحافة العالمية', href: '/section/world-press/' },
   { label: 'اقتصاد', href: '/section/economy/' },
   { label: 'صحة', href: '/section/health/' },
   { label: 'رياضة', href: '/section/sports/' },

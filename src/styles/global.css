@@ -325,3 +325,8 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
   .mainnav { flex: 1 1 100%; }
   .mainnav a, .subnav a { flex: 0 0 auto; }
 }
+
+/* المسافة قبل التذييل أقلّ على الهاتف */
+@media (max-width: 700px) {
+  footer.foot { margin-top: 24px; }
+}

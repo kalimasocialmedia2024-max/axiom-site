@@ -12,7 +12,7 @@ export async function GET() {
     ...Object.values(KINDS).map((k) => ({ loc: u(`/${k.path}/`), lastmod: latest, freq: 'hourly', pr: '0.8' })),
     ...SECTIONS.map((s) => ({ loc: u(sectionUrl(s.slug)), lastmod: latest, freq: 'hourly', pr: '0.8' })),
     ...d.articles.map((a) => ({ loc: u(articleUrl(a)), lastmod: a.updatedAt || a.publishedAt, freq: 'weekly', pr: '0.7' })),
-    ...tagCounts(d.articles).map((t) => ({ loc: u(tagUrl(t.tag)), lastmod: latest, freq: 'daily', pr: '0.5' })),
+    ...tagCounts(d.articles).filter((t) => t.count >= 3).map((t) => ({ loc: u(tagUrl(t.tag)), lastmod: latest, freq: 'daily', pr: '0.5' })),
     ...d.writers.map((w) => ({ loc: u(`/writers/${w.slug}/`), freq: 'weekly', pr: '0.4' })),
     ...d.episodes.map((e) => ({ loc: u(`/media/${e.slug}/`), lastmod: e.publishedAt, freq: 'monthly', pr: '0.5' })),
     ...d.pages.map((p) => ({ loc: u(`/page/${p.slug}/`), freq: 'monthly', pr: '0.3' })),

@@ -35,3 +35,6 @@ jobs:
             echo "$r"
             echo "$r" | grep -q '"more":true' || break
           done
+      - name: إبلاغ محرّكات البحث (IndexNow)
+        if: always()
+        run: curl -s https://axiomplusmedia.com/api/indexnow-run

@@ -32,8 +32,8 @@ const updated = a.updatedAt && Date.parse(a.updatedAt) - Date.parse(a.publishedA
     <Share title={a.title} />
     {a.image?.url && (
       <figure class="fig">
-        <Img src={a.image.url} alt={a.image.alt || ''} ratio="r169" w={1280} eager />
-        {(a.image.caption || a.image.credit) && <figcaption>{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
+        <Img src={a.image.url} alt={a.image.alt || a.title} ratio="r169" w={1280} eager />
+        {(a.image.caption || a.image.credit || a.source) && <figcaption>{[a.image.caption, a.image.credit || (a.source && ('المصدر: ' + a.source))].filter(Boolean).join(' · ')}</figcaption>}
       </figure>
     )}
     <Fragment set:html={body.html} />

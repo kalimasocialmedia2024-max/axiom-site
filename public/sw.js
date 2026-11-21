@@ -20,3 +20,28 @@ self.addEventListener('fetch', (e) => {
       .catch(() => caches.match(req).then((hit) => hit || (req.mode === 'navigate' ? caches.match('/') : undefined)))
   );
 });
+
+// الإشعارات: يصل التنبيه فارغاً، فيجلب العامل عنوان الخبر ويعرضه.
+self.addEventListener('push', (e) => {
+  e.waitUntil(
+    fetch('/api/push-latest', { cache: 'no-store' })
+      .then((r) => r.json())
+      .catch(() => ({}))
+      .then((d) =>
+        self.registration.showNotification('AXIOM+', {
+          body: d.title || 'جديد على AXIOM+',
+          icon: '/brand/logo-square.png',
+          badge: '/brand/logo-square.png',
+          dir: 'rtl',
+          lang: 'ar',
+          tag: d.id || 'axiom',
+          data: { url: d.url || '/' },
+        })
+      )
+  );
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(self.clients.openWindow((e.notification.data && e.notification.data.url) || '/'));
+});

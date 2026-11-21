@@ -1,6 +1,7 @@
 ---
 import { MAIN_NAV, SUB_NAV, SOCIAL } from '../lib/config.js';
 import Logo from './Logo.astro';
+import PushBell from './PushBell.astro';
 const { active = '' } = Astro.props;
 const cur = (href) => (active && href.startsWith(active) ? 'page' : undefined);
 ---
@@ -9,6 +10,8 @@ const cur = (href) => (active && href.startsWith(active) ? 'page' : undefined);
     <span id="today"></span>
     <div class="links">
       {SOCIAL.map((s) => <a href={s.href} class="soc" aria-label={'AXIOM+ على ' + s.label} title={s.label} rel="noopener"><i class={'fa-brands ' + s.icon} aria-hidden="true"></i></a>)}
+      <span class="sep" aria-hidden="true">|</span>
+      <PushBell />
       <span class="sep" aria-hidden="true">|</span>
       <a href="/page/about/">من نحن</a>
     </div>

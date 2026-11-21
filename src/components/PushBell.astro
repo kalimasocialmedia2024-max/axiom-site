@@ -1,0 +1,68 @@
+---
+// زرّ "التنبيهات العاجلة" في الشريط العلوي: القارئ وحده يقرّر التفعيل أو الإلغاء،
+// ولا يُطلب إذن المتصفّح إلا بعد ضغطه الزرّ.
+---
+<button type="button" id="push-bell" class="push-bell" hidden aria-pressed="false">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+  <span id="push-label">فعّل التنبيهات العاجلة</span>
+</button>
+<div id="push-toast" class="push-toast" role="status" hidden></div>
+<style>
+  .push-bell { display: inline-flex; align-items: center; gap: 5px; background: none; border: 0; padding: 0; color: #BDBDC4; font: inherit; cursor: pointer; }
+  .push-bell[hidden] { display: none; }
+  .push-bell:hover { color: #fff; }
+  .push-bell[aria-pressed='true'] { color: #fff; }
+  .push-bell[aria-pressed='true'] svg { fill: var(--accent); stroke: var(--accent); }
+  .push-toast { position: fixed; inset-inline: 12px; top: 12px; z-index: 70; max-width: 460px; margin-inline: auto; padding: 12px 16px; background: #121214; color: #fff; border-radius: 10px; border-inline-start: 4px solid var(--accent); box-shadow: 0 8px 28px rgba(0,0,0,.35); font: 14px/1.7 var(--f-ui); }
+  .push-toast[hidden] { display: none; }
+</style>
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('push-bell');
+    var label = document.getElementById('push-label');
+    var toast = document.getElementById('push-toast');
+    var timer;
+    function say(t) { toast.textContent = t; toast.hidden = false; clearTimeout(timer); timer = setTimeout(function () { toast.hidden = true; }, 6000); }
+    function setOn(on) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); label.textContent = on ? 'التنبيهات مفعّلة' : 'فعّل التنبيهات العاجلة'; }
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    var supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    if (!supported) {
+      if (ios && !standalone) {
+        btn.hidden = false;
+        btn.addEventListener('click', function () { say('على آيفون: اضغط زرّ المشاركة ثمّ "إضافة إلى الشاشة الرئيسية"، وافتح التطبيق من هناك لتفعيل التنبيهات.'); });
+      }
+      return;
+    }
+    btn.hidden = false;
+    function toKey(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+    function post(method, sub) { return fetch('/api/push-subscribe', { method: method, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) }); }
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (s) { setOn(!!s && Notification.permission === 'granted'); });
+    btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      try {
+        var reg = await navigator.serviceWorker.ready;
+        var cur = await reg.pushManager.getSubscription();
+        if (cur && Notification.permission === 'granted') {
+          await post('DELETE', cur).catch(function () {});
+          await cur.unsubscribe();
+          setOn(false);
+          say('أُوقفت التنبيهات. يمكنك تفعيلها مجدّداً متى شئت.');
+          return;
+        }
+        var p = await Notification.requestPermission();
+        if (p !== 'granted') { say(p === 'denied' ? 'التنبيهات محظورة في إعدادات المتصفّح لهذا الموقع؛ يمكنك السماح بها من هناك.' : 'لم تُفعَّل التنبيهات.'); return; }
+        var k = await (await fetch('/api/push-key')).json();
+        var sub = cur || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: toKey(k.key) });
+        var r = await post('POST', sub);
+        if (!r.ok) throw new Error();
+        setOn(true);
+        say('فُعّلت التنبيهات: تصلك الأخبار العاجلة والبارزة فقط، بحدّ أقصى خمسة في اليوم.');
+      } catch (e) {
+        say('تعذّر تفعيل التنبيهات الآن، حاول لاحقاً.');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  })();
+</script>

@@ -13,6 +13,7 @@ const KINDS = [
 const SECTIONS = [
   { title: 'محلي', value: 'local' },
   { title: 'إقليمي ودولي', value: 'regional' },
+  { title: 'الصحافة العالمية', value: 'world-press' },
   { title: 'اقتصاد', value: 'economy' },
   { title: 'صحة', value: 'health' },
   { title: 'رياضة', value: 'sports' },

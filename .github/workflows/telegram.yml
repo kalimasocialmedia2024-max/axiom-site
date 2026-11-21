@@ -37,4 +37,4 @@ jobs:
           done
       - name: إبلاغ محرّكات البحث (IndexNow)
         if: always()
-        run: curl -s https://axiomplusmedia.com/api/indexnow-run
+        run: node scripts/indexnow.mjs

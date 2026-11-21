@@ -4,11 +4,8 @@ import ListingPage from '../../components/ListingPage.astro';
 import { getData, bySection } from '../../lib/sanity.js';
 import { SECTIONS, sectionUrl } from '../../lib/config.js';
 
-export function getStaticPaths() {
-  return SECTIONS.map((s) => ({ params: { slug: s.slug }, props: { section: s } }));
-}
-
-const { section } = Astro.props;
+const section = SECTIONS.find((s) => s.slug === Astro.params.slug);
+if (!section) return Astro.rewrite('/404');
 const data = await getData();
 // القسم يجمع الأخبار والتحليلات والموادّ الأخرى الموسومة به.
 const items = bySection(data.articles, section.slug).slice(0, 200);

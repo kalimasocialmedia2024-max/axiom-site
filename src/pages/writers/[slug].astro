@@ -5,13 +5,10 @@ import Ad from '../../components/Ad.astro';
 import { getData, byWriter } from '../../lib/sanity.js';
 import { KINDS } from '../../lib/config.js';
 
-export async function getStaticPaths() {
-  const data = await getData();
-  return data.writers.map((w) => ({ params: { slug: w.slug }, props: { w } }));
-}
-
-const { w } = Astro.props;
+const dec = (v) => { try { return decodeURIComponent(v || ''); } catch { return v || ''; } };
 const data = await getData();
+const w = data.writers.find((x) => x.slug === Astro.params.slug || x.slug === dec(Astro.params.slug));
+if (!w) return Astro.rewrite('/404');
 const items = byWriter(data.articles, w.slug);
 const kinds = [...new Set(items.map((a) => a.kind))];
 const others = data.writers.filter((x) => x.slug !== w.slug).slice(0, 6);

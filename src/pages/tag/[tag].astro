@@ -11,6 +11,6 @@ const items = data.articles.filter((a) => (a.tags || []).includes(tag));
 const pills = tagCounts(data.articles).filter((t) => t.tag !== tag).slice(0, 12).map((t) => ({ label: t.tag, href: tagUrl(t.tag) }));
 const description = `كلّ ما نشرته AXIOM+ عن ${tag}: أخبار وتحليلات ومتابعات.`;
 ---
-<Base title={tag} description={description}>
+<Base title={tag} description={description} noindex={items.length < 3}>
   <ListingPage title={tag} crumb={`وسم: ${tag}`} description={description} items={items} pills={pills} />
 </Base>

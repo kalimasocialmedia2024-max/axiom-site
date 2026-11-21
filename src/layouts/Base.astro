@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Breaking from '../components/Breaking.astro';
+import InstallApp from '../components/InstallApp.astro';
 import { SITE } from '../lib/config.js';
 import { getData } from '../lib/sanity.js';
 
@@ -21,6 +22,10 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
   <link rel="canonical" href={canonical}>
   <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="AXIOM+">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta property="og:site_name" content={SITE.name}>
   <meta property="og:title" content={title || SITE.name}>
   <meta property="og:description" content={description}>
@@ -60,6 +65,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <slot />
   </div>
   <Footer />
+  <InstallApp />
   <script is:inline>
     (function () {
       var btn = document.getElementById('theme-toggle');

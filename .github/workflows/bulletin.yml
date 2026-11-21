@@ -2,6 +2,7 @@ name: النشرة الصوتية
 on:
   schedule:
     - cron: '25 * * * *'
+    - cron: '58 4 * * *'
   workflow_dispatch:
 concurrency: bulletin
 jobs:

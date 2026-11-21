@@ -70,7 +70,7 @@ export const SOCIAL = [
   { label: 'يوتيوب', icon: 'fa-youtube', href: '#' },
   { label: 'فيسبوك', icon: 'fa-facebook-f', href: 'https://www.facebook.com/share/1JELvEyJzv/' },
   { label: 'إنستغرام', icon: 'fa-instagram', href: 'https://www.instagram.com/plusaxiom/' },
-  { label: 'تيليغرام', icon: 'fa-telegram', href: '#' },
+  { label: 'تيليغرام', icon: 'fa-telegram', href: 'https://t.me/Axiomplus' },
   { label: 'لينكدإن', icon: 'fa-linkedin-in', href: '#' },
 ];
 

@@ -302,3 +302,9 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
   .tools .icon-btn.round svg { width: 15px; height: 15px; }
   .tools { gap: 6px; }
 }
+
+/* الشعار أصغر قليلاً لتبقى القائمة سطراً واحداً */
+@media (min-width: 900px) {
+  .masthead .logo img.mark { height: 60px; }
+  .mainnav, .mainnav ul { column-gap: 18px; }
+}

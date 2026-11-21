@@ -8,7 +8,7 @@ const cur = (href) => (active && href.startsWith(active) ? 'page' : undefined);
   <div class="wrap">
     <span id="today"></span>
     <div class="links">
-      {SOCIAL.map((s) => <a href={s.href} aria-label={s.aria} rel="noopener">{s.label}</a>)}
+      {SOCIAL.map((s) => <a href={s.href} class="soc" aria-label={'AXIOM+ على ' + s.label} title={s.label} rel="noopener"><i class={'fa-brands ' + s.icon} aria-hidden="true"></i></a>)}
       <span class="sep" aria-hidden="true">|</span>
       <a href="/page/about/">من نحن</a>
     </div>

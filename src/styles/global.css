@@ -330,3 +330,14 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
 @media (max-width: 700px) {
   footer.foot { margin-top: 24px; }
 }
+
+/* الشعار المقسوم: علامة + أبعد قليلاً عن الاسم، والعبارة نصّ أبيض بخط كوفي حديث */
+.logo .mark-split { --h: 44px; display: inline-flex; direction: ltr; height: var(--h); }
+.logo .mark-split > span { display: block; height: var(--h); background: url(/brand/logo.png) no-repeat 0 0; background-size: calc(var(--h) * 1742 / 308) auto; }
+.logo .ms-a { width: calc(var(--h) * 1561 / 308); }
+.logo .mark-split > .ms-b { width: calc(var(--h) * 181 / 308); background-position: calc(var(--h) * -1561 / 308) 0; margin-left: calc(var(--h) * 0.14); }
+.logo .slogan-text { font-family: var(--f-head); font-weight: 600; font-size: 13px; line-height: 1.3; color: #E6E6EA; white-space: nowrap; margin-top: 2px; }
+@media (max-width: 700px) {
+  .masthead .logo .mark-split { --h: 34px; }
+  .masthead .logo .slogan-text { font-size: 11px; }
+}

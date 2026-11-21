@@ -26,7 +26,7 @@ const more = [...byKind(data.articles, 'investigation'), ...byKind(data.articles
 </section>
 {a.image?.url ? (
   <figure style="margin:0">
-    <Img src={a.image.url} alt={a.image.alt || ''} ratio="r219" w={2000} eager style="border-radius:0" />
+    <Img src={a.image.url} alt={a.image.alt || a.title} ratio="r219" w={2000} eager style="border-radius:0" />
     {(a.image.caption || a.image.credit) && <figcaption class="wrap meta" style="padding-top:8px">{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
   </figure>
 ) : <div class="ph r219" style="border-radius:0" aria-hidden="true">صورة عريضة للتحقيق</div>}

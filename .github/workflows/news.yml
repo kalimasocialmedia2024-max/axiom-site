@@ -18,3 +18,8 @@ jobs:
           SANITY_PROJECT_ID: 9rw3viyf
           SANITY_DATASET: production
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+      - run: node scripts/cleanup-incoming.mjs
+        env:
+          SANITY_PROJECT_ID: 9rw3viyf
+          SANITY_DATASET: production
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}

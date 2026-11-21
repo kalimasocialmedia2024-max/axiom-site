@@ -279,3 +279,8 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
 .side-item h3, .side-item h3 a { color: var(--ink); }
 .hero-main h1 a:hover, .side-item h3 a:hover { color: var(--accent-hover); }
 .ticker-track { animation-duration: var(--tick-dur, 100s); }
+
+/* أيقونات الحسابات في الشريط العلويّ والتذييل */
+.soc { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-size: 15px; line-height: 1; }
+.foot .soc { width: 34px; height: 34px; font-size: 18px; border: 1px solid #3A3A42; border-radius: 50%; }
+.foot .soc:hover { border-color: var(--accent); background: var(--accent); }

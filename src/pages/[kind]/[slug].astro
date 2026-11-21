@@ -6,16 +6,13 @@ import Opinion from '../../components/templates/Opinion.astro';
 import Investigation from '../../components/templates/Investigation.astro';
 import Study from '../../components/templates/Study.astro';
 import { getData } from '../../lib/sanity.js';
-import { KINDS, SITE, articleUrl, sectionTitle } from '../../lib/config.js';
+import { KINDS, SITE, articleUrl, sectionTitle, kindByPath } from '../../lib/config.js';
 
-export async function getStaticPaths() {
-  const data = await getData();
-  return data.articles
-    .filter((a) => KINDS[a.kind])
-    .map((a) => ({ params: { kind: KINDS[a.kind].path, slug: a.slug }, props: { article: a } }));
-}
-
-const { article: a } = Astro.props;
+const dec = (v) => { try { return decodeURIComponent(v || ''); } catch { return v || ''; } };
+const kind = kindByPath(Astro.params.kind);
+const data = kind ? await getData() : null;
+const a = data?.articles.find((x) => x.kind === kind && (x.slug === Astro.params.slug || x.slug === dec(Astro.params.slug)));
+if (!a) return Astro.rewrite('/404');
 const url = new URL(articleUrl(a), SITE.url).href;
 const ld = {
   '@context': 'https://schema.org',

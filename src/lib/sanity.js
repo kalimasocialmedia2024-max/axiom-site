@@ -6,7 +6,7 @@ import { sampleData } from './sample.js';
 
 const env = (k) => (import.meta.env && import.meta.env[k]) || (typeof process !== 'undefined' ? process.env[k] : undefined);
 
-const PROJECT_ID = env('SANITY_PROJECT_ID');
+const PROJECT_ID = env('SANITY_PROJECT_ID') || '9rw3viyf';
 const DATASET = env('SANITY_DATASET') || 'production';
 const API_VERSION = '2025-02-19';
 
@@ -51,11 +51,17 @@ const ALL = `{
   "settings": *[_type == "siteSettings"][0] { breakingText, markets, matches, mostReadManual[]->{ title, "slug": slug.current, kind } }
 }`;
 
+// ذاكرة مؤقّتة لدقيقة واحدة: ما يُنشر في Sanity يظهر على الموقع خلال دقيقة.
 let cache;
+let cachedAt = 0;
+const TTL = 60 * 1000;
 
 export function getData() {
-  if (!cache) {
-    cache = (sanityEnabled ? query(ALL) : Promise.resolve(sampleData())).then(normalize);
+  if (!cache || Date.now() - cachedAt > TTL) {
+    cachedAt = Date.now();
+    const prev = cache;
+    const next = (sanityEnabled ? query(ALL) : Promise.resolve(sampleData())).then(normalize);
+    cache = prev ? next.catch(() => prev) : next;
   }
   return cache;
 }

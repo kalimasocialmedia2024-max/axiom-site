@@ -4,12 +4,8 @@ import Base from '../../layouts/Base.astro';
 import ListingPage from '../../components/ListingPage.astro';
 import { getData, tagCounts, tagUrl } from '../../lib/sanity.js';
 
-export async function getStaticPaths() {
-  const data = await getData();
-  return tagCounts(data.articles).map(({ tag }) => ({ params: { tag }, props: { tag } }));
-}
-
-const { tag } = Astro.props;
+const dec = (v) => { try { return decodeURIComponent(v || ''); } catch { return v || ''; } };
+const tag = dec(Astro.params.tag);
 const data = await getData();
 const items = data.articles.filter((a) => (a.tags || []).includes(tag));
 const pills = tagCounts(data.articles).filter((t) => t.tag !== tag).slice(0, 12).map((t) => ({ label: t.tag, href: tagUrl(t.tag) }));

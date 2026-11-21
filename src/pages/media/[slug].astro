@@ -6,12 +6,10 @@ import { MEDIA_TYPES } from '../../lib/config.js';
 import { fmtDate } from '../../lib/format.js';
 import { youtubeId } from '../../lib/portableText.js';
 
-export async function getStaticPaths() {
-  const data = await getData();
-  return data.episodes.map((e) => ({ params: { slug: e.slug }, props: { e } }));
-}
-
-const { e } = Astro.props;
+const dec = (v) => { try { return decodeURIComponent(v || ''); } catch { return v || ''; } };
+const data = await getData();
+const e = data.episodes.find((x) => x.slug === Astro.params.slug || x.slug === dec(Astro.params.slug));
+if (!e) return Astro.rewrite('/404');
 const yt = youtubeId(e.youtubeUrl);
 ---
 <Base title={e.title} description={e.description} image={e.cover} active="/media/">

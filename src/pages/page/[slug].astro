@@ -5,17 +5,13 @@ import { getData } from '../../lib/sanity.js';
 import { renderBody } from '../../lib/portableText.js';
 import { FOOTER_LINKS } from '../../lib/config.js';
 
-export async function getStaticPaths() {
-  const data = await getData();
-  const fromCms = data.pages.map((p) => ({ params: { slug: p.slug }, props: { page: p } }));
-  const have = new Set(data.pages.map((p) => p.slug));
-  const placeholders = [...FOOTER_LINKS.filter((l) => l.href.startsWith('/page/')).map((l) => ({ slug: l.href.split('/')[2], title: l.label })), { slug: 'privacy', title: 'سياسة الخصوصية' }, { slug: 'terms', title: 'شروط الاستخدام' }]
-    .filter((p) => !have.has(p.slug))
-    .map((p) => ({ params: { slug: p.slug }, props: { page: { ...p, body: [] } } }));
-  return [...fromCms, ...placeholders];
-}
-
-const { page } = Astro.props;
+const data = await getData();
+const have = new Set(data.pages.map((p) => p.slug));
+const placeholders = [...FOOTER_LINKS.filter((l) => l.href.startsWith('/page/')).map((l) => ({ slug: l.href.split('/')[2], title: l.label })), { slug: 'privacy', title: 'سياسة الخصوصية' }, { slug: 'terms', title: 'شروط الاستخدام' }]
+  .filter((p) => !have.has(p.slug))
+  .map((p) => ({ ...p, body: [] }));
+const page = [...data.pages, ...placeholders].find((p) => p.slug === Astro.params.slug);
+if (!page) return Astro.rewrite('/404');
 const body = renderBody(page.body || []);
 ---
 <Base title={page.title}>

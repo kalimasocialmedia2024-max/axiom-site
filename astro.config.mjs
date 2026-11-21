@@ -1,9 +1,11 @@
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 
-// موقع ثابت يُبنى على Cloudflare Pages، ويُعاد بناؤه تلقائياً كلّما نُشرت مادّة في Sanity.
+// موقع حيّ على Cloudflare: تُقرأ الموادّ من Sanity عند الطلب، فلا حاجة لإعادة البناء عند كلّ نشر.
 export default defineConfig({
   site: 'https://axiomplusmedia.com',
-  output: 'static',
+  output: 'server',
+  adapter: cloudflare({ imageService: 'passthrough' }),
   trailingSlash: 'ignore',
   build: { format: 'directory' },
 });

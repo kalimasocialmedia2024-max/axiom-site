@@ -1,12 +1,15 @@
 ---
-// الشعار المعتمد في public/brand/logo.png، والشعار "إعلام بمستوى الحقيقة" جزء منه.
-// إن غاب الملفّ يظهر الاسم نصّاً بدلاً منه.
+// الشعار: صورة الاسم من public/brand/logo.png مقسومة جزأين لتُبعَد علامة + قليلاً عن الاسم،
+// والعبارة "إعلام بمستوى الحقيقة" نصّ حقيقي تحتها. إن غاب الملفّ يظهر الاسم نصّاً.
 import { BRAND } from '../lib/brand.js';
 import { SITE } from '../lib/config.js';
 const { small = false } = Astro.props;
 ---
 <span class="logo">
   {BRAND.logo
-    ? <img class="mark" src={BRAND.logo} alt={`${SITE.name}: ${SITE.slogan}`} style={small ? 'height:44px' : undefined}>
+    ? <>
+        <span class="mark-split" role="img" aria-label={`${SITE.name}: ${SITE.slogan}`} style={small ? '--h:30px' : undefined}><span class="ms-a"></span><span class="ms-b"></span></span>
+        <span class="slogan-text" aria-hidden="true">{SITE.slogan}</span>
+      </>
     : <span class="fallback" dir="ltr">{SITE.name}</span>}
 </span>

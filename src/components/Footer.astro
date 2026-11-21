@@ -17,7 +17,7 @@ const year = new Date().getFullYear();
     </div>
     <div class="r">
       <div class="links" style="gap:20px">{FOOTER_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}</div>
-      <div class="links">{SOCIAL.map((s) => <a href={s.href} aria-label={s.aria} rel="noopener">{s.label}</a>)}</div>
+      <div class="links" style="gap:10px">{SOCIAL.map((s) => <a href={s.href} class="soc" aria-label={'AXIOM+ على ' + s.label} title={s.label} rel="noopener"><i class={'fa-brands ' + s.icon} aria-hidden="true"></i></a>)}</div>
     </div>
     <div class="r">
       <span>© {year} {SITE.name}</span>

@@ -11,7 +11,9 @@ import { readingTime, authorNames } from '../lib/format.js';
 const data = await getData();
 const A = data.articles;
 const analyses = byKind(A, 'analysis');
-const lead = A.find((a) => a.featured) || analyses[0] || A[0];
+// الواجهة: المادّة البارزة تبقى في الصدارة 8 ساعات فقط، ثمّ يتقدّم أحدث خبر مصوّر.
+const fresh = (a, h) => Date.now() - new Date(a.publishedAt).getTime() < h * 3600 * 1000;
+const lead = A.find((a) => a.featured && fresh(a, 8)) || A.find((a) => a.kind === 'news' && a.image?.url) || A[0];
 const used = new Set(lead ? [lead.slug] : []);
 const pick = (list, n) => {
   const out = list.filter((a) => !used.has(a.slug)).slice(0, n);

@@ -1,4 +1,5 @@
 ---
+import ComingSoon from '../../components/ComingSoon.astro';
 import Base from '../../layouts/Base.astro';
 import Img from '../../components/Img.astro';
 import { getData } from '../../lib/sanity.js';
@@ -61,7 +62,7 @@ const play = (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="#
   <div class="wrap article-wrap" style="padding-top:48px">
     <section class="article-main" style="gap:20px">
       <div class="h-sec"><h2 style="font-size:24px">البرامج</h2></div>
-      {data.programs.length === 0 && <p class="empty">لم تُضف البرامج بعد.</p>}
+      {data.programs.length === 0 && <ComingSoon title="البرامج" />}
       <div class="grid" style="--min:200px;gap:20px">
         {data.programs.map((p) => (
           <div class="box" style="overflow:hidden;display:flex;flex-direction:column">

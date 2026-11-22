@@ -89,7 +89,8 @@ for (const f of feeds) {
           kind: 'news',
           section: f.section,
           desk: deskFor({ title: i.title, feedSummary: i.summary, section: f.section }),
-          title: i.title.slice(0, 160),
+          // عناوين Google News تنتهي باسم الوسيلة (" - الميادين"): يُحذف.
+          title: (/news\.google\./.test(i.link) ? i.title.replace(/\s+[-–]\s+[^-–]{2,60}$/, '') : i.title).slice(0, 160),
           feedSummary: i.summary || i.title,
           source: f.name,
           sourceUrl: i.link,

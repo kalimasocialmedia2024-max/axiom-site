@@ -37,7 +37,7 @@ const tagOf = (a) => (a.kind === 'news' ? sectionTitle(a.section) || 'أخبار
           <span class="badge">الأبرز</span>
           <h2 class="kufi" style="margin:0;font-weight:800;font-size:28px;line-height:1.55"><a href={articleUrl(lead)}>{lead.title}</a></h2>
           {lead.excerpt && <p style="margin:0;font-size:16px;line-height:1.9;color:var(--ink2)">{lead.excerpt}</p>}
-          <span class="meta">{[lead.kind === 'news' ? lead.source : null, fmtDate(lead.publishedAt)].filter(Boolean).join(' · ')}</span>
+          <span class="meta">{[lead.kind === 'news' && lead.section === 'world-press' ? lead.source : null, fmtDate(lead.publishedAt)].filter(Boolean).join(' · ')}</span>
         </div>
       </article>
     )}

@@ -11,7 +11,7 @@ const tag = a.kind === 'news' ? sectionTitle(a.section) || KINDS.news.badge : KI
   <div class="txt">
     <div style="display:flex;gap:10px;align-items:center">
       {tag && <span class="tag">{tag}</span>}
-      {a.kind === 'news' && a.source && <span class="agency">{a.source}</span>}
+      {a.kind === 'news' && a.section === 'world-press' && a.source && <span class="agency">{a.source}</span>}
     </div>
     <h3><a href={articleUrl(a)}>{a.title}</a></h3>
     {a.excerpt && <p>{a.excerpt}</p>}

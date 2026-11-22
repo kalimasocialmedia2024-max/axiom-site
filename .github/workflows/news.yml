@@ -7,7 +7,7 @@ concurrency: news
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,7 +18,16 @@ jobs:
           SANITY_PROJECT_ID: 9rw3viyf
           SANITY_DATASET: production
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+      - name: مسوّدات أخبار لبنان وسوريا
+        if: always()
+        run: node scripts/gemini-drafts.mjs
+        env:
+          SANITY_PROJECT_ID: 9rw3viyf
+          SANITY_DATASET: production
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       - run: node scripts/cleanup-incoming.mjs
+        if: always()
         env:
           SANITY_PROJECT_ID: 9rw3viyf
           SANITY_DATASET: production

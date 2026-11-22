@@ -88,7 +88,7 @@ export const article = defineType({
     defineField({ name: 'englishUrl', title: 'رابط النسخة الإنكليزية', type: 'url', group: 'extra', hidden: only('study') }),
 
     // النشر
-    defineField({ name: 'slug', title: 'الرابط', type: 'slug', group: 'publish', description: 'اضغط "توليد"، أو اكتبه بالإنكليزية بكلمات تفصل بينها شرطات.', options: { source: 'title', maxLength: 90, slugify: slugify }, validation: (r) => r.required() }),
+    defineField({ name: 'slug', title: 'رابط الخبر على الموقع', type: 'slug', group: 'publish', description: 'يُولَّد تلقائياً من العنوان عند رفع الخبر أو نشره، فلا حاجة إلى ملئه. ويمكن كتابته بالإنكليزية بكلمات تفصل بينها شرطات لمن أراد.', options: { source: 'title', maxLength: 90, slugify: slugify } }),
     defineField({ name: 'publishedAt', title: 'تاريخ النشر', type: 'datetime', group: 'publish', description: 'يُملأ تلقائياً عند النشر.' }),
     defineField({ name: 'tags', title: 'الوسوم', type: 'array', of: [{ type: 'string' }], options: { layout: 'tags' }, group: 'publish' }),
     defineField({ name: 'breaking', title: 'عاجل', type: 'boolean', group: 'publish', initialValue: false, hidden: only('news') }),

@@ -143,7 +143,17 @@ function makePublish(Original) {
       onHandle: () => {
         setPublishing(true);
         const doc = props.draft || props.published || {};
+        // بلا رابط لا يظهر الخبر على الموقع: يُولَّد من العنوان تلقائياً إن نسيه المحرّر.
+        const autoSlug = String(doc.title || 'axiom')
+          .trim()
+          .toLowerCase()
+          .replace(/[\u064B-\u0652\u0640]/g, '')
+          .replace(/[^\p{L}\p{N}\s-]/gu, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .slice(0, 70) + '-' + String(props.id).replace(/^drafts\./, '').slice(-6);
         patch.execute([
+          ...(doc.slug?.current ? [] : [{ set: { slug: { _type: 'slug', current: autoSlug } } }]),
           { set: { workflow: STATUS.published } },
           { setIfMissing: { publishedAt: doc.publishedAt || new Date().toISOString(), history: [] } },
           { insert: { after: 'history[-1]', items: [entry(STATUS.published, name)] } },

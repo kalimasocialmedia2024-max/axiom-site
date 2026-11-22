@@ -38,14 +38,29 @@ export function useStaffRole() {
   return { role, name: user?.name || user?.email || '' };
 }
 
+// رابط الخبر على الموقع: يُولَّد من العنوان تلقائياً إن لم يكتبه أحد.
+const slugPatch = (doc, id) => {
+  if (doc?.slug?.current) return [];
+  const base = String(doc?.title || 'axiom')
+    .replace(/\s+[-–]\s+[^-–]{2,60}$/, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\u064B-\u0652\u0640]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 70);
+  return [{ set: { slug: { _type: 'slug', current: `${base}-${String(id).replace(/^drafts\./, '').slice(-6)}` } } }];
+};
+
 const statusOf = (props) => (props.draft || props.published)?.workflow || STATUS.draft;
 const entry = (status, by) => ({ _key: Math.random().toString(36).slice(2, 10), _type: 'object', status, by, at: new Date().toISOString() });
 
 function useMove(props) {
   const { patch } = useDocumentOperation(props.id, props.type);
   const { name } = useStaffRole();
-  return (status, extra = {}) => {
-    patch.execute([{ set: { workflow: status, ...extra } }, { setIfMissing: { history: [] } }, { insert: { after: 'history[-1]', items: [entry(status, name)] } }]);
+  return (status, extra = {}, more = []) => {
+    patch.execute([...more, { set: { workflow: status, ...extra } }, { setIfMissing: { history: [] } }, { insert: { after: 'history[-1]', items: [entry(status, name)] } }]);
   };
 }
 
@@ -74,7 +89,7 @@ function ForwardAction(props) {
     label: 'انتهى التحرير: رفع إلى رئيس التحرير',
     tone: 'primary',
     onHandle: () => {
-      move(STATUS.edited);
+      move(STATUS.edited, {}, slugPatch(props.draft || props.published, props.id));
       props.onComplete();
     },
   };
@@ -143,17 +158,8 @@ function makePublish(Original) {
       onHandle: () => {
         setPublishing(true);
         const doc = props.draft || props.published || {};
-        // بلا رابط لا يظهر الخبر على الموقع: يُولَّد من العنوان تلقائياً إن نسيه المحرّر.
-        const autoSlug = String(doc.title || 'axiom')
-          .trim()
-          .toLowerCase()
-          .replace(/[\u064B-\u0652\u0640]/g, '')
-          .replace(/[^\p{L}\p{N}\s-]/gu, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .slice(0, 70) + '-' + String(props.id).replace(/^drafts\./, '').slice(-6);
         patch.execute([
-          ...(doc.slug?.current ? [] : [{ set: { slug: { _type: 'slug', current: autoSlug } } }]),
+          ...slugPatch(doc, props.id),
           { set: { workflow: STATUS.published } },
           { setIfMissing: { publishedAt: doc.publishedAt || new Date().toISOString(), history: [] } },
           { insert: { after: 'history[-1]', items: [entry(STATUS.published, name)] } },

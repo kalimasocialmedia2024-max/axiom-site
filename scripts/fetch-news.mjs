@@ -1,5 +1,6 @@
 // يجلب الأخبار من مصادر RSS المسجّلة في لوحة التحرير ("مصادر الأخبار الآلية")
 // ويضعها مسوّدات في طابور "أخبار واردة من المصادر". لا يُنشر شيء آلياً.
+import { deskFor } from './desk.mjs';
 import { query, mutate, hash, key, plain, decode } from './lib.mjs';
 
 const UA = 'Mozilla/5.0 (compatible; AXIOMPlusNewsBot/1.0; +https://axiomplusmedia.com)';
@@ -87,6 +88,7 @@ for (const f of feeds) {
           _type: 'article',
           kind: 'news',
           section: f.section,
+          desk: deskFor({ title: i.title, feedSummary: i.summary, section: f.section }),
           title: i.title.slice(0, 160),
           feedSummary: i.summary || i.title,
           source: f.name,
@@ -113,3 +115,10 @@ for (const f of feeds) {
   }
 }
 console.log(`المجموع: ${total} خبراً جديداً`);
+
+// تصنيف ما سبق وروده بلا مكتب (مرّة واحدة لكلّ خبر).
+const untagged = await query(`*[_type == "article" && workflow == "incoming" && !defined(desk)][0...1500]{_id, title, feedSummary, section}`);
+for (let i = 0; i < untagged.length; i += 100) {
+  await mutate(untagged.slice(i, i + 100).map((a) => ({ patch: { id: a._id, set: { desk: deskFor(a) } } })));
+}
+if (untagged.length) console.log(`صُنّف ${untagged.length} خبراً وارداً على المكاتب.`);

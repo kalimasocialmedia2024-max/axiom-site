@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { STATUS_LIST } from '../workflow/status.js';
+import { DESKS } from '../structure.js';
 
 const KINDS = [
   { title: 'خبر', value: 'news' },
@@ -47,6 +48,14 @@ export const article = defineType({
       hidden: ({ document }) => document?.kind === 'news',
     }),
     defineField({ name: 'section', title: 'القسم', type: 'string', group: 'content', options: { list: SECTIONS }, description: 'إلزاميّ للأخبار، واختياريّ لغيرها.', validation: (r) => r.custom((v, ctx) => (ctx.document?.kind === 'news' && !v ? 'اختر قسم الخبر' : true)) }),
+    defineField({
+      name: 'desk',
+      title: 'المكتب في غرفة التحرير',
+      type: 'string',
+      group: 'content',
+      description: 'تصنيف داخلي للأخبار الواردة يملؤه الجلب الآلي، ويمكن تغييره. لا يظهر على الموقع.',
+      options: { list: DESKS.map(([value, title]) => ({ value, title })) },
+    }),
     defineField({
       name: 'mainImage',
       title: 'الصورة الرئيسية',

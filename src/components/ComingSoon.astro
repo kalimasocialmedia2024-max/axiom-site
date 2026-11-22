@@ -1,0 +1,20 @@
+---
+// لوحة "قريباً" للأقسام التي لم تُفعَّل بعد: تظهر مكان المحتوى حين يخلو القسم من الموادّ.
+import Logo from './Logo.astro';
+const { title = '' } = Astro.props;
+---
+<div class="soon" role="img" aria-label={`قسم ${title} قريباً على AXIOM+`}>
+  <div class="soon-logo"><Logo /></div>
+  <strong class="soon-word">قريباً</strong>
+  {title && <p class="soon-line">نعدّ موادّ قسم "{title}"، وتُنشر هنا قريباً.</p>}
+</div>
+<style>
+  .soon { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; min-height: 340px; padding: 48px 24px; border-radius: 14px; text-align: center; color: #fff;
+    background: radial-gradient(120% 90% at 50% 0%, #26262C 0%, #121214 55%, #0B0B0D 100%); border-bottom: 4px solid var(--accent); }
+  .soon::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; }
+  .soon > * { position: relative; }
+  .soon-word { font-family: var(--f-head); font-weight: 900; font-size: clamp(48px, 9vw, 96px); line-height: 1.1; letter-spacing: 0; }
+  .soon-word::after { content: ''; display: block; width: 72px; height: 4px; margin: 14px auto 0; background: var(--accent); border-radius: 2px; }
+  .soon-line { margin: 0; max-width: 520px; color: #C9C9D1; font: 500 16px/1.8 var(--f-ui); }
+  @media (max-width: 700px) { .soon { min-height: 260px; padding: 36px 18px; } .soon-line { font-size: 14px; } }
+</style>

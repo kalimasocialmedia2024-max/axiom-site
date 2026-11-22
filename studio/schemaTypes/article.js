@@ -1,6 +1,8 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { STATUS_LIST } from '../workflow/status.js';
 import { DESKS } from '../structure.js';
+import { createElement } from 'react';
+import { OpenSource, FeedImagePreview } from '../components/FeedTools.jsx';
 
 const KINDS = [
   { title: 'خبر', value: 'news' },
@@ -35,8 +37,12 @@ export const article = defineType({
   ],
   fields: [
     defineField({ name: 'kind', title: 'نوع المادّة', type: 'string', group: 'content', options: { list: KINDS, layout: 'radio', direction: 'horizontal' }, initialValue: 'news', validation: (r) => r.required() }),
+    // للخبر الوارد: نصّ المصدر والخبر الأصلي في الأعلى، ليقرأ المحرّر ثمّ يكتب.
+    defineField({ name: 'feedSummary', title: 'نصّ المصدر كما ورد (للمرجع فقط، لا يُنشر). أعد الصياغة بلغتنا في خانة "النصّ"', type: 'text', rows: 5, group: 'content', readOnly: true, hidden: ({ document }) => !document?.feedSummary }),
+    defineField({ name: 'openSource', title: 'الخبر الأصلي', type: 'string', group: 'content', readOnly: true, components: { input: OpenSource }, hidden: ({ document }) => !document?.sourceUrl }),
     defineField({ name: 'title', title: 'العنوان', type: 'string', group: 'content', validation: (r) => r.required().max(160) }),
     defineField({ name: 'subtitle', title: 'العنوان الفرعي', type: 'string', group: 'content', hidden: only('analysis', 'investigation', 'special', 'study') }),
+    defineField({ name: 'body', title: 'النصّ', type: 'blockContent', group: 'content' }),
     defineField({ name: 'excerpt', title: 'المقتطف (سطران يظهران في البطاقات؛ وفي الدراسة: فقرة الملخّص التنفيذيّ)', type: 'text', rows: 3, group: 'content', validation: (r) => r.max(600) }),
     defineField({
       name: 'authors',
@@ -56,6 +62,7 @@ export const article = defineType({
       description: 'تصنيف داخلي للأخبار الواردة يملؤه الجلب الآلي، ويمكن تغييره. لا يظهر على الموقع.',
       options: { list: DESKS.map(([value, title]) => ({ value, title })) },
     }),
+    defineField({ name: 'feedImage', title: 'صورة المصدر', type: 'url', group: 'content', readOnly: true, components: { input: FeedImagePreview }, hidden: ({ document }) => !document?.feedImage }),
     defineField({
       name: 'mainImage',
       title: 'الصورة الرئيسية',
@@ -68,13 +75,10 @@ export const article = defineType({
         defineField({ name: 'credit', type: 'string', title: 'مصدر الصورة' }),
       ],
     }),
-    defineField({ name: 'body', title: 'النصّ', type: 'blockContent', group: 'content' }),
 
     // عناصر خاصّة بكلّ قالب
     defineField({ name: 'source', title: 'المصدر (الجهة أو الوكالة)', type: 'string', group: 'extra', hidden: only('news') }),
     defineField({ name: 'sourceUrl', title: 'رابط الخبر الأصليّ', type: 'url', group: 'extra', hidden: only('news') }),
-    defineField({ name: 'feedSummary', title: 'نصّ المصدر كما ورد (للمرجع فقط، لا يُنشر). أعد الصياغة بلغتنا', type: 'text', rows: 6, group: 'content', readOnly: true, hidden: ({ document }) => !document?.feedSummary }),
-    defineField({ name: 'feedImage', title: 'صورة المصدر (تظهر إن لم تُضف صورة رئيسية)', type: 'url', group: 'content', hidden: ({ document }) => !document?.feedImage }),
     defineField({ name: 'feedLang', title: 'لغة المصدر', type: 'string', group: 'extra', readOnly: true, hidden: ({ document }) => !document?.feedLang }),
     defineField({ name: 'context', title: 'سياق الخبر', type: 'text', rows: 3, group: 'extra', hidden: only('news') }),
     defineField({ name: 'summary', title: 'الخلاصة (نقاط)', type: 'array', of: [{ type: 'string' }], group: 'extra', hidden: only('analysis') }),
@@ -90,7 +94,7 @@ export const article = defineType({
     // النشر
     defineField({ name: 'slug', title: 'رابط الخبر على الموقع', type: 'slug', group: 'publish', description: 'يُولَّد تلقائياً من العنوان عند رفع الخبر أو نشره، فلا حاجة إلى ملئه. ويمكن كتابته بالإنكليزية بكلمات تفصل بينها شرطات لمن أراد.', options: { source: 'title', maxLength: 90, slugify: slugify } }),
     defineField({ name: 'publishedAt', title: 'تاريخ النشر', type: 'datetime', group: 'publish', description: 'يُملأ تلقائياً عند النشر.' }),
-    defineField({ name: 'tags', title: 'الوسوم', type: 'array', of: [{ type: 'string' }], options: { layout: 'tags' }, group: 'publish' }),
+    defineField({ name: 'tags', title: 'الوسوم', type: 'array', of: [{ type: 'string' }], options: { layout: 'tags' }, group: ['content', 'publish'] }),
     defineField({ name: 'breaking', title: 'عاجل', type: 'boolean', group: 'publish', initialValue: false, hidden: only('news') }),
     defineField({ name: 'featured', title: 'في واجهة الصفحة الرئيسية', type: 'boolean', group: 'publish', initialValue: false }),
     defineField({ name: 'readingMinutes', title: 'مدّة القراءة بالدقائق (اختياريّ، تُحسب تلقائياً)', type: 'number', group: 'publish' }),
@@ -122,11 +126,14 @@ export const article = defineType({
   ],
   orderings: [{ title: 'الأحدث', name: 'newest', by: [{ field: 'publishedAt', direction: 'desc' }] }],
   preview: {
-    select: { title: 'title', kind: 'kind', status: 'workflow', media: 'mainImage' },
-    prepare: ({ title, kind, status, media }) => ({
+    select: { title: 'title', kind: 'kind', status: 'workflow', media: 'mainImage', feedImage: 'feedImage', source: 'source', created: '_createdAt' },
+    prepare: ({ title, kind, status, media, feedImage, source, created }) => ({
       title,
-      subtitle: [KINDS.find((k) => k.value === kind)?.title, STATUS_LIST.find((s) => s.value === status)?.title].filter(Boolean).join(' · '),
-      media,
+      subtitle:
+        status === 'incoming'
+          ? [source, created ? new Date(created).toLocaleString('ar-LB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) : ''].filter(Boolean).join(' · ')
+          : [KINDS.find((k) => k.value === kind)?.title, STATUS_LIST.find((s) => s.value === status)?.title].filter(Boolean).join(' · '),
+      media: media || (feedImage ? createElement('img', { src: feedImage, alt: '', referrerPolicy: 'no-referrer', style: { width: '100%', height: '100%', objectFit: 'cover' } }) : undefined),
     }),
   },
 });

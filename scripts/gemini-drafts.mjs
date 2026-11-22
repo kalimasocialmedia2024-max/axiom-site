@@ -79,7 +79,12 @@ async function call(a) {
 }
 async function draft(a) {
   const r = await ask(a);
-  if (r.status === 429) throw Object.assign(new Error((await r.text()).replace(/\s+/g, ' ').slice(0, 300)), { quota: true });
+  if (r.status === 429) {
+    const t = await r.text();
+    let why = '';
+    try { why = JSON.stringify((JSON.parse(t).error.details || []).flatMap((d) => d.violations || []).map((v) => [v.quotaMetric, v.quotaId, v.quotaValue])); } catch {}
+    throw Object.assign(new Error(why || t.replace(/\s+/g, ' ').slice(0, 300)), { quota: true });
+  }
   if (!r.ok) throw new Error(`Gemini ${MODEL} ${r.status}: ${(await r.text()).slice(0, 200)}`);
   const j = await r.json();
   return (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('').trim();
@@ -111,6 +116,13 @@ for (const a of todo) {
     done.add(a._id);
   } catch (e) {
     if (e.quota) {
+      // فحص تشخيصي: هل يعمل النموذج نفسه من دون البحث؟ (لا يُكتب شيء)
+      const t = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-goog-api-key': API_KEY },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'قل: نعم' }] }] }),
+      });
+      console.log(`فحص من دون بحث: ${t.status}`);
       console.log(`بلغت الحصّة المجانية حدّها (${MODEL})؛ يُستأنف لاحقاً. ${e.message}`);
       break;
     }

@@ -27,13 +27,13 @@ const updated = a.updatedAt && Date.parse(a.updatedAt) - Date.parse(a.publishedA
     <div class="a-meta">
       <span>نُشر: {fmtDateTime(a.publishedAt)}</span>
       {updated && <span>آخر تحديث: {fmtTime(a.updatedAt)}</span>}
-      {a.source && <span style="color:var(--ink);font-weight:600">المصدر: {a.sourceUrl ? <a href={a.sourceUrl} rel="noopener nofollow" target="_blank">{a.source}</a> : a.source}</span>}
+      {a.source && a.section === 'world-press' && <span style="color:var(--ink);font-weight:600">المصدر: {a.sourceUrl ? <a href={a.sourceUrl} rel="noopener nofollow" target="_blank">{a.source}</a> : a.source}</span>}
     </div>
     <Share title={a.title} />
     {a.image?.url && (
       <figure class="fig">
         <Img src={a.image.url} alt={a.image.alt || a.title} ratio="r169" w={1280} eager />
-        {(a.image.caption || a.image.credit || a.source) && <figcaption>{[a.image.caption, a.image.credit || (a.source && ('المصدر: ' + a.source))].filter(Boolean).join(' · ')}</figcaption>}
+        {(a.image.caption || a.image.credit) && <figcaption>{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
       </figure>
     )}
     <Fragment set:html={body.html} />

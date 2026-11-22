@@ -9,7 +9,9 @@ if (!API_KEY) {
   console.log('لا مفتاح Gemini؛ تخطٍّ.');
   process.exit(0);
 }
-const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+// الحصّة المجانية: نماذج Flash Lite تسمح بنحو 500 طلب يومياً (Flash الكامل 20 فقط).
+const MODELS = (process.env.GEMINI_MODEL || 'gemini-flash-lite-latest,gemini-3.5-flash-lite,gemini-3.1-flash-lite').split(',');
+let MODEL = MODELS[0];
 const PER_RUN = Number(process.env.GEMINI_PER_RUN || 10);
 const LOG = 'gemini-log';
 
@@ -54,7 +56,18 @@ BODY:
 لا تذكر أنك بحثت، ولا تذكر أيّ أداة أو نموذج، ولا تضع روابط أو علامات تنسيق.)`;
 
 async function ask(a) {
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+  for (;;) {
+    const r = await call(a);
+    if (r.status === 404 && MODELS.indexOf(MODEL) < MODELS.length - 1) {
+      MODEL = MODELS[MODELS.indexOf(MODEL) + 1];
+      console.log(`تجربة النموذج ${MODEL}`);
+      continue;
+    }
+    return r;
+  }
+}
+async function call(a) {
+  return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': API_KEY },
     body: JSON.stringify({
@@ -63,8 +76,11 @@ async function ask(a) {
       generationConfig: { temperature: 0.2 },
     }),
   });
-  if (r.status === 429) throw Object.assign(new Error('quota'), { quota: true });
-  if (!r.ok) throw new Error(`Gemini ${r.status}: ${(await r.text()).slice(0, 200)}`);
+}
+async function draft(a) {
+  const r = await ask(a);
+  if (r.status === 429) throw Object.assign(new Error((await r.text()).replace(/\s+/g, ' ').slice(0, 300)), { quota: true });
+  if (!r.ok) throw new Error(`Gemini ${MODEL} ${r.status}: ${(await r.text()).slice(0, 200)}`);
   const j = await r.json();
   return (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('').trim();
 }
@@ -79,7 +95,7 @@ const blocks = (text) =>
 let ok = 0, miss = 0;
 for (const a of todo) {
   try {
-    const out = await ask(a);
+    const out = await draft(a);
     const m = out.match(/SUMMARY:\s*([\s\S]*?)\s*BODY:\s*([\s\S]+)/i);
     if (!m || /NOT_FOUND/.test(out.slice(0, 40))) {
       miss++;
@@ -95,12 +111,12 @@ for (const a of todo) {
     done.add(a._id);
   } catch (e) {
     if (e.quota) {
-      console.log('بلغت الحصّة المجانية حدّها في هذه الدورة؛ يُستأنف لاحقاً.');
+      console.log(`بلغت الحصّة المجانية حدّها (${MODEL})؛ يُستأنف لاحقاً. ${e.message}`);
       break;
     }
     console.log(`✗ ${a.title.slice(0, 60)}: ${e.message}`);
   }
-  await new Promise((r) => setTimeout(r, 7000));
+  await new Promise((r) => setTimeout(r, 5000));
 }
 
 await mutate([

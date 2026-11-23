@@ -20,6 +20,7 @@ const cur = (href) => (active && href.startsWith(active) ? 'page' : undefined);
 <header>
   <div class="masthead">
     <div class="wrap">
+      <span id="today-m" class="m-date"></span>
       <a href="/" aria-label="AXIOM+، الصفحة الرئيسية"><Logo /></a>
       <nav class="nav mainnav" aria-label="الأقسام">
         {MAIN_NAV.map((n) => <a href={n.href} aria-current={cur(n.href)}>{n.label}</a>)}

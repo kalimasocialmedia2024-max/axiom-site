@@ -104,7 +104,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
       if (dm) {
         try {
           var f = function (o) { return new Intl.DateTimeFormat('ar-LB-u-nu-latn', Object.assign({ timeZone: 'Asia/Beirut' }, o)).format(new Date()); };
-          dm.innerHTML = '<b>' + f({ weekday: 'long' }) + '</b>' + f({ day: 'numeric', month: 'long' }) + '<small>' + f({ year: 'numeric' }) + '</small>';
+          dm.innerHTML = '<b>' + f({ weekday: 'long' }) + '</b><span dir="ltr">' + f({ day: 'numeric' }) + '/' + f({ month: 'numeric' }) + '/' + f({ year: 'numeric' }) + '</span>';
         } catch (e) {}
       }
       document.querySelectorAll('[data-copy]').forEach(function (b) {

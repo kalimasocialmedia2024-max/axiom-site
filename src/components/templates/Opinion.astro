@@ -6,6 +6,7 @@ import Related from '../Related.astro';
 import Tags from '../Tags.astro';
 import Ad from '../Ad.astro';
 import AuthorBox from '../AuthorBox.astro';
+import Img from '../Img.astro';
 import { getData, byWriter, byKind } from '../../lib/sanity.js';
 import { renderBody } from '../../lib/portableText.js';
 import { articleUrl, SITE } from '../../lib/config.js';
@@ -38,6 +39,12 @@ const more = byKind(data.articles, 'opinion').filter((x) => x.slug !== a.slug &&
       <span style="font-style:italic">المقال يعبّر عن رأي كاتبه ولا يعبّر بالضرورة عن رأي الشبكة</span>
     </div>
     <Share title={a.title} />
+    {a.image?.url && (
+      <figure class="fig">
+        <Img src={a.image.url} alt={a.image.alt || a.title} ratio="r169" w={1280} eager />
+        {(a.image.caption || a.image.credit) && <figcaption>{[a.image.caption, a.image.credit].filter(Boolean).join(' · ')}</figcaption>}
+      </figure>
+    )}
     <Fragment set:html={body.html} />
     {w.name && <AuthorBox w={w} dark />}
     {others.length > 0 && (

@@ -354,9 +354,14 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
   .install-app { bottom: calc(70px + env(safe-area-inset-bottom)) !important; }
 }
 
-/* التاريخ على الهاتف: أعلى اليمين في رأس الصفحة */
+/* التاريخ على الهاتف: سطر صغير فوق الشعار، وزرّ الوضع الداكن أصغر، والبحث في الشريط السفلي فقط */
 .m-date { display: none; }
 @media (max-width: 700px) {
-  .masthead .m-date { display: flex; flex-direction: column; align-items: flex-start; position: absolute; right: 12px; top: 15px; font: 600 12px/1.45 var(--f-head); color: #BDBDC4; text-align: right; }
-  .masthead .m-date b { color: #fff; font-size: 12px; }
+  .masthead .m-date { display: block; flex: 1 1 100%; text-align: center; padding-top: 8px; font: 500 11px/1.4 var(--f-head); color: #9C9CA6; }
+  .masthead .wrap { row-gap: 4px; }
+  .masthead .logo { padding-top: 2px; }
+  .masthead .tools { top: 34px; }
+  .masthead .tools a[href="/search/"] { display: none; }
+  .masthead .tools .icon-btn.round { width: 26px; height: 26px; min-width: 26px; }
+  .masthead .tools .icon-btn.round svg { width: 13px; height: 13px; }
 }

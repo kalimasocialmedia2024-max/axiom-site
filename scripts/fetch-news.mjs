@@ -123,3 +123,12 @@ for (let i = 0; i < untagged.length; i += 100) {
   await mutate(untagged.slice(i, i + 100).map((a) => ({ patch: { id: a._id, set: { desk: deskFor(a) } } })));
 }
 if (untagged.length) console.log(`صُنّف ${untagged.length} خبراً وارداً على المكاتب.`);
+
+// تنظيف: حذف الأخبار الواردة التي لم يعالجها أحد بعد 48 ساعة (يبقى عدد المستندات ضمن الخطّة المجانية).
+// لا يمسّ أيّ خبر منشور أو محرَّر أو محجوز: الحالة "incoming" فقط، وفي المسوّدات فقط.
+const cutoff = new Date(Date.now() - 48 * 3600e3).toISOString();
+const old = await query(`*[_type == "article" && workflow == "incoming" && _id in path("drafts.**") && _createdAt < $c][0...1000]._id`, { c: cutoff });
+for (let i = 0; i < old.length; i += 100) {
+  await mutate(old.slice(i, i + 100).map((id) => ({ delete: { id } })));
+}
+if (old.length) console.log(`حُذف ${old.length} خبراً وارداً تجاوز 48 ساعة دون معالجة.`);

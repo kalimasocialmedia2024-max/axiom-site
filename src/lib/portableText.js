@@ -32,6 +32,10 @@ export function renderBody(blocks = [], opts = {}) {
         for (const m of child.marks || []) {
           if (m === 'strong') html = `<strong>${html}</strong>`;
           else if (m === 'em') html = `<em>${html}</em>`;
+          else if (m === 'underline') html = `<u>${html}</u>`;
+          else if (m === 'strike-through') html = `<s>${html}</s>`;
+          else if (m === 'mark') html = `<mark class="pt-mark">${html}</mark>`;
+          else if (m === 'big' || m === 'small' || /^c-(red|blue|green|gray)$/.test(m)) html = `<span class="pt-${m}">${html}</span>`;
           else if (defs[m]?._type === 'link') {
             const ext = /^https?:/i.test(defs[m].href || '');
             html = `<a href="${esc(safeHref(defs[m].href))}"${ext ? ' target="_blank" rel="noopener"' : ''}>${html}</a>`;
@@ -72,6 +76,11 @@ export function renderBody(blocks = [], opts = {}) {
         out.push(`<h2 id="${id}" class="prose-h2">${num}${inner}</h2>`);
       } else if (style === 'h3') {
         out.push(`<h3 class="prose-h3">${inner}</h3>`);
+      } else if (style === 'h4') {
+        out.push(`<h4 class="prose-h4">${inner}</h4>`);
+      } else if ((style === 'lead' || style === 'small') && inner.trim()) {
+        out.push(`<p class="prose-p prose-${style}">${inner}</p>`);
+        paraCount++;
       } else if (style === 'blockquote') {
         out.push(`<blockquote class="pull">${inner}</blockquote>`);
       } else if (inner.trim()) {

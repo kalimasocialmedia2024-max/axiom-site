@@ -11,6 +11,6 @@ const data = await getData();
 const items = bySection(data.articles, section.slug).slice(0, 200);
 const pills = [{ label: 'كلّ الأخبار', href: '/news/' }, ...SECTIONS.map((s) => ({ label: s.title, href: sectionUrl(s.slug) }))];
 ---
-<Base title={section.title} description={section.description} active={sectionUrl(section.slug)}>
+<Base title={section.title} description={section.description} active={sectionUrl(section.slug)} noindex={items.length === 0}>
   <ListingPage title={section.title} description={section.description} items={items} pills={pills} activePill={sectionUrl(section.slug)} />
 </Base>

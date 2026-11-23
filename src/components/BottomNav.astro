@@ -1,0 +1,45 @@
+---
+// شريط التنقّل السفلي على الهاتف فقط: الرئيسية، الأخبار، الصحافة العالمية، بحث، التنبيهات.
+const path = Astro.url.pathname;
+const items = [
+  { href: '/', label: 'الرئيسية', on: path === '/', icon: '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/>' },
+  { href: '/news/', label: 'الأخبار', on: path.startsWith('/news') || path.startsWith('/section/local') || path.startsWith('/section/regional'), icon: '<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="17" x2="13" y2="17"/>' },
+  { href: '/section/world-press/', label: 'الصحافة العالمية', on: path.startsWith('/section/world-press'), icon: '<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"/>' },
+  { href: '/search/', label: 'بحث', on: path.startsWith('/search'), icon: '<circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>' },
+];
+---
+<nav class="bottom-nav" aria-label="تنقّل سريع">
+  {items.map((i) => (
+    <a href={i.href} aria-current={i.on ? 'page' : undefined}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={i.icon} />
+      <span>{i.label}</span>
+    </a>
+  ))}
+  <button type="button" id="bn-bell" hidden aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    <span>التنبيهات</span>
+  </button>
+</nav>
+<style>
+  .bottom-nav { display: none; }
+  @media (max-width: 700px) {
+    .bottom-nav { display: flex; position: fixed; inset-inline: 0; bottom: 0; z-index: 55; background: #0E0E10; border-top: 2px solid var(--accent); padding-bottom: env(safe-area-inset-bottom); }
+    .bottom-nav a, .bottom-nav button { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 56px; padding: 6px 2px; color: #A9A9B2; background: none; border: 0; font: 600 11px/1.2 var(--f-head); text-align: center; cursor: pointer; }
+    .bottom-nav button[hidden] { display: none; }
+    .bottom-nav svg { width: 21px; height: 21px; }
+    .bottom-nav [aria-current='page'], .bottom-nav [aria-pressed='true'] { color: #fff; }
+    .bottom-nav [aria-current='page'] svg { stroke: var(--accent); }
+    .bottom-nav [aria-pressed='true'] svg { fill: var(--accent); stroke: var(--accent); }
+  }
+</style>
+<script is:inline>
+  (function () {
+    var src = document.getElementById('push-bell');
+    var b = document.getElementById('bn-bell');
+    if (!src || !b) return;
+    function sync() { b.hidden = src.hidden; b.setAttribute('aria-pressed', src.getAttribute('aria-pressed') || 'false'); }
+    sync();
+    new MutationObserver(sync).observe(src, { attributes: true, attributeFilter: ['hidden', 'aria-pressed'] });
+    b.addEventListener('click', function () { src.click(); });
+  })();
+</script>

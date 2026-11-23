@@ -365,3 +365,19 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
   .masthead .tools .icon-btn.round { width: 26px; height: 26px; min-width: 26px; }
   .masthead .tools .icon-btn.round svg { width: 13px; height: 13px; }
 }
+
+/* تنسيقات النصّ من لوحة التحرير */
+.prose-p strong, .prose-list strong, .pull strong { font-weight: 700; color: var(--ink, #111); }
+.prose-h4 { margin: 8px 0 0; font-family: var(--f-head); font-weight: 700; font-size: 18px; color: var(--ink, #111); }
+.prose-lead { font-size: 23px; font-weight: 600; line-height: 1.95; }
+.prose-small { font-size: 16px; color: var(--muted); }
+.pt-big { font-size: 1.22em; font-weight: 600; }
+.pt-small { font-size: 0.85em; }
+.pt-c-red { color: #D0021B; }
+.pt-c-blue { color: #1F5FAD; }
+.pt-c-green { color: #1E7D4F; }
+.pt-c-gray { color: var(--muted); }
+.pt-mark { background: #FFE58A; color: #111; padding: 0 3px; border-radius: 2px; }
+[data-theme="dark"] .pt-c-blue { color: #6FA8E8; }
+[data-theme="dark"] .pt-c-green { color: #4CC48A; }
+@media (max-width: 700px) { .prose-lead { font-size: 20px; } .prose-small { font-size: 15px; } }

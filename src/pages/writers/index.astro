@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import ComingSoon from '../../components/ComingSoon.astro';
 import { getData, byWriter } from '../../lib/sanity.js';
 
 const data = await getData();
@@ -14,7 +15,7 @@ const writers = data.writers.map((w) => ({ ...w, count: byWriter(data.articles, 
     </div>
   </section>
   <main class="wrap" style="padding-top:32px">
-    {writers.length === 0 && <p class="empty">لم تُضف صفحات الكتّاب بعد.</p>}
+    {writers.length === 0 && <ComingSoon title="الكتّاب" />}
     <div class="grid" style="--min:280px;gap:20px">
       {writers.map((w) => (
         <a href={`/writers/${w.slug}/`} class="writer-card">

@@ -11,6 +11,6 @@ const data = await getData();
 const items = byKind(data.articles, kind).slice(0, 200);
 const pills = kind === 'news' ? [{ label: 'الكلّ', href: '/news/' }, ...SECTIONS.map((s) => ({ label: s.title, href: sectionUrl(s.slug) }))] : [];
 ---
-<Base title={k.label} description={k.description} active={`/${k.path}/`}>
+<Base title={k.label} description={k.description} active={`/${k.path}/`} noindex={items.length === 0}>
   <ListingPage title={k.label} description={k.description} items={items} pills={pills} activePill="/news/" />
 </Base>

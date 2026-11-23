@@ -357,7 +357,6 @@ sup.fn a { color: var(--accent); font-size: 13px; font-weight: 700; font-family:
 /* التاريخ على الهاتف: أعلى اليمين في رأس الصفحة */
 .m-date { display: none; }
 @media (max-width: 700px) {
-  .masthead .m-date { display: flex; flex-direction: column; align-items: flex-start; position: absolute; right: 14px; top: 13px; font: 600 11px/1.35 var(--f-head); color: #BDBDC4; text-align: right; }
+  .masthead .m-date { display: flex; flex-direction: column; align-items: flex-start; position: absolute; right: 12px; top: 15px; font: 600 12px/1.45 var(--f-head); color: #BDBDC4; text-align: right; }
   .masthead .m-date b { color: #fff; font-size: 12px; }
-  .masthead .m-date small { font-size: 10px; color: #8C8C96; }
 }

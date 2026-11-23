@@ -6,7 +6,7 @@ import { getData, byWriter } from '../../lib/sanity.js';
 const data = await getData();
 const writers = data.writers.map((w) => ({ ...w, count: byWriter(data.articles, w.slug).length }));
 ---
-<Base title="الكتّاب" description="كتّاب AXIOM+ ومحلّلوها" active="/writers/">
+<Base title="الكتّاب" description="كتّاب AXIOM+ ومحلّلوها" active="/writers/" noindex={writers.length === 0}>
   <section class="page-head">
     <div class="wrap">
       <nav class="crumbs" aria-label="مسار التصفّح"><a href="/">الرئيسية</a><span aria-hidden="true">›</span><span>الكتّاب</span></nav>

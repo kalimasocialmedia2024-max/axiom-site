@@ -12,7 +12,7 @@ const latest = eps.find((e) => e.mediaType !== 'audio') || eps[0];
 const audio = eps.filter((e) => e.mediaType === 'audio').slice(0, 8);
 const play = (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>`;
 ---
-<Base title="بودكاست وفيديو" description="بودكاست AXIOM+ وفيديوهاتها ونشرتها الصوتية" active="/media/">
+<Base title="بودكاست وفيديو" description="بودكاست AXIOM+ وفيديوهاتها ونشرتها الصوتية" active="/media/" noindex={eps.length === 0}>
   {eps.length === 0 && <div class="wrap" style="padding-top:32px"><ComingSoon title="البودكاست والفيديو والنشرة الصوتية" /></div>}
   {eps.length > 0 && <section class="dark-band">
     <div class="wrap" style="padding-block:40px;display:flex;flex-direction:column;gap:28px">

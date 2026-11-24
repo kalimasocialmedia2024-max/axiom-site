@@ -1,0 +1,33 @@
+<div id="beta-notice" class="beta-notice" role="note" hidden>
+  <p>الموقع لا يزال في انطلاقته التجريبية، لذا نعتذر سلفاً عن أيّ خطأ قد يظهر، تحريرياً كان أم تقنياً.</p>
+  <button type="button" class="beta-x" aria-label="إغلاق التنبيه">×</button>
+</div>
+<script is:inline>
+  (function () {
+    var KEY = 'axiom-beta-notice-v1';
+    var el = document.getElementById('beta-notice');
+    if (!el) return;
+    try { if (localStorage.getItem(KEY) === '1') return; } catch (e) {}
+    el.hidden = false;
+    el.querySelector('.beta-x').addEventListener('click', function () {
+      el.hidden = true;
+      try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    });
+  })();
+</script>
+<style>
+  .beta-notice {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    background: #C8000A; color: #fff; padding: 7px 44px; position: relative;
+    font: 500 13px/1.6 var(--f-head, inherit); text-align: center;
+  }
+  .beta-notice[hidden] { display: none; }
+  .beta-notice p { margin: 0; }
+  .beta-x {
+    position: absolute; inset-inline-end: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: 0; color: #fff; font-size: 22px; line-height: 1;
+    cursor: pointer; padding: 4px 8px; opacity: .85;
+  }
+  .beta-x:hover { opacity: 1; }
+  @media (max-width: 700px) { .beta-notice { font-size: 12px; padding: 6px 38px; } }
+</style>

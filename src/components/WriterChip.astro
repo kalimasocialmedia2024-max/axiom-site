@@ -1,0 +1,15 @@
+---
+// اسم الكاتب وصورته الصغيرة على بطاقات مقالات الرأي والتحليل.
+const { a } = Astro.props;
+const w = a.kind !== 'news' ? (a.authors || [])[0] : null;
+---
+{w && (
+  <span class="writer-chip">
+    {w.photo && <img src={`${w.photo}?w=56&h=56&fit=crop`} alt="" width="28" height="28" loading="lazy" />}
+    <span>{(a.authors || []).map((x) => x.name).join('، ')}</span>
+  </span>
+)}
+<style>
+  .writer-chip { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .writer-chip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; }
+</style>

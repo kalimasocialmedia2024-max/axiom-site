@@ -5,6 +5,7 @@ import Row from './Row.astro';
 import MostRead from './MostRead.astro';
 import Ad from './Ad.astro';
 import ComingSoon from './ComingSoon.astro';
+import WriterChip from './WriterChip.astro';
 import { articleUrl, KINDS, sectionTitle } from '../lib/config.js';
 import { imageFirst } from '../lib/sanity.js';
 import { fmtDate } from '../lib/format.js';
@@ -37,6 +38,7 @@ const tagOf = (a) => (a.kind === 'news' ? sectionTitle(a.section) || 'أخبار
           <span class="badge">الأبرز</span>
           <h2 class="kufi" style="margin:0;font-weight:800;font-size:28px;line-height:1.55"><a href={articleUrl(lead)}>{lead.title}</a></h2>
           {lead.excerpt && <p style="margin:0;font-size:16px;line-height:1.9;color:var(--ink2)">{lead.excerpt}</p>}
+          <WriterChip a={lead} />
           <span class="meta">{[lead.kind === 'news' && lead.section === 'world-press' ? lead.source : null, fmtDate(lead.publishedAt)].filter(Boolean).join(' · ')}</span>
         </div>
       </article>
@@ -48,6 +50,7 @@ const tagOf = (a) => (a.kind === 'news' ? sectionTitle(a.section) || 'أخبار
             <a href={articleUrl(a)} tabindex="-1" aria-hidden="true"><Img src={a.image?.url} alt="" ratio="r32" w={520} label={tagOf(a)} /></a>
             <div style="display:flex;gap:8px;align-items:center"><span class="tag" style="font-size:12px">{tagOf(a)}</span></div>
             <h3><a href={articleUrl(a)}>{a.title}</a></h3>
+            <WriterChip a={a} />
             <span class="meta">{fmtDate(a.publishedAt)}</span>
           </article>
         ))}

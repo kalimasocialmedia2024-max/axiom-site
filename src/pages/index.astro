@@ -25,7 +25,8 @@ const three = pick(analyses, 3);
 // إلى أن تُنشر تحليلات، يحلّ محلّها أحدث الأخبار.
 const latestNews = three.length ? [] : pick(imageFirst(byKind(A, 'news')), 6);
 const topics = tagCounts(A).slice(0, 14);
-const opinions = pick(byKind(A, 'opinion'), 4);
+// قسم الكتّاب يعرض دائماً أحدث مقالات الرأي، حتّى لو ظهر أحدها في أعلى الصفحة.
+const opinions = byKind(A, 'opinion').slice(0, 4);
 const invLead = pick(byKind(A, 'investigation'), 1)[0];
 const specials = pick([...byKind(A, 'special'), ...byKind(A, 'investigation')], 3);
 const latestAudio = data.episodes.find((e) => e.mediaType === 'audio');

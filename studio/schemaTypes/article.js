@@ -3,6 +3,7 @@ import { STATUS_LIST } from '../workflow/status.js';
 import { DESKS } from '../structure.js';
 import { createElement } from 'react';
 import { OpenSource, FeedImagePreview } from '../components/FeedTools.jsx';
+import { TagsInput } from '../components/TagsInput.jsx';
 
 const KINDS = [
   { title: 'خبر', value: 'news' },
@@ -94,7 +95,7 @@ export const article = defineType({
     // النشر
     defineField({ name: 'slug', title: 'رابط الخبر على الموقع', type: 'slug', group: 'publish', description: 'يُولَّد تلقائياً من العنوان عند رفع الخبر أو نشره، فلا حاجة إلى ملئه. ويمكن كتابته بالإنكليزية بكلمات تفصل بينها شرطات لمن أراد.', options: { source: 'title', maxLength: 90, slugify: slugify } }),
     defineField({ name: 'publishedAt', title: 'تاريخ النشر', type: 'datetime', group: 'publish', description: 'يُملأ تلقائياً عند النشر.' }),
-    defineField({ name: 'tags', title: 'الوسوم', type: 'array', of: [{ type: 'string' }], options: { layout: 'tags' }, group: ['content', 'publish'] }),
+    defineField({ name: 'tags', title: 'الوسوم', type: 'array', of: [{ type: 'string' }], components: { input: TagsInput }, group: ['content', 'publish'] }),
     defineField({ name: 'breaking', title: 'عاجل', type: 'boolean', group: 'publish', initialValue: false, hidden: only('news') }),
     defineField({ name: 'featured', title: 'في واجهة الصفحة الرئيسية', type: 'boolean', group: 'publish', initialValue: false }),
     defineField({ name: 'readingMinutes', title: 'مدّة القراءة بالدقائق (اختياريّ، تُحسب تلقائياً)', type: 'number', group: 'publish' }),
